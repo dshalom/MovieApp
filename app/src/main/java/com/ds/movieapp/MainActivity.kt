@@ -15,8 +15,6 @@ import com.ds.movieapp.ui.theme.MovieAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val d  = 999
         setContent {
             MovieAppTheme {
                 // A surface container using the 'background' color from the theme
