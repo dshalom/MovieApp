@@ -25,12 +25,7 @@ apply(plugin = "org.jlleitschuh.gradle.ktlint")
 // to do add more dependencies here
 
 subprojects {
-//    apply( plugin =  "io.gitlab.arturbosch.detekt")
-//    detekt {
-//        config = files("${project.rootDir}/config/detekt/detekt.yml")
-//        parallel = true
-//    }
-//
+    apply( from = "${project.rootDir}/buildscripts/detekt.gradle" )
     apply( plugin =  "io.gitlab.arturbosch.detekt")
 
     detekt {
