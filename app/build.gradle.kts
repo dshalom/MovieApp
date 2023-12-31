@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
+
     kotlin("kapt")
 }
 
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ds.movieapp"
-        minSdk = 32
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
