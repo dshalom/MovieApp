@@ -24,7 +24,6 @@ apply(plugin = "org.jlleitschuh.gradle.ktlint")
 // to do add more dependencies here
 
 subprojects {
-    apply(from = "${project.rootDir}/buildscripts/detekt.gradle")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     detekt {
