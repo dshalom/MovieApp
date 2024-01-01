@@ -29,7 +29,7 @@ subprojects {
     detekt {
         buildUponDefaultConfig = true // preconfigure defaults
         allRules = false // activate all available (even unstable) rules.
-        config.setFrom("${project.rootDir}/config/detekt.yaml") // point to your custom config defining rules to run, overwriting default behavior
+        config.setFrom("$project/config/detekt.yaml") // point to your custom config defining rules to run, overwriting default behavior
         baseline =
             file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt_run.yaml
     }
