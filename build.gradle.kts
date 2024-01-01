@@ -29,9 +29,15 @@ subprojects {
     detekt {
         buildUponDefaultConfig = true // preconfigure defaults
         allRules = false // activate all available (even unstable) rules.
-        config.setFrom("$project/config/detekt.yaml") // point to your custom config defining rules to run, overwriting default behavior
+        config.setFrom("$projectDir/config/detekt/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
         baseline =
             file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt_run.yaml
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        reports {
+            html.required.set(true) // observe findings in your browser with structure and code snippets
+        }
     }
 
 // Kotlin DSL
