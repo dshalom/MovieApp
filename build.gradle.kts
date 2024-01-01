@@ -16,24 +16,34 @@ buildscript {
     }
     dependencies {
         classpath("org.jlleitschuh.gradle:ktlint-gradle:11.5.1")
+        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.4")
     }
 }
 
 apply(plugin = "org.jlleitschuh.gradle.ktlint")
 // to do add more dependencies here
-apply(plugin = "io.gitlab.arturbosch.detekt")
 
-detekt {
-    buildUponDefaultConfig = true // preconfigure defaults
-    allRules = false // activate all available (even unstable) rules.
-    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
-    baseline = file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
-}
+subprojects {
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    detekt {
+        buildUponDefaultConfig = true // preconfigure defaults
+        allRules = false // activate all available (even unstable) rules.
+        config.setFrom("$projectDir/../config/detekt/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+        baseline =
+            file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt_run.yaml
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        reports {
+            html.required.set(true) // observe findings in your browser with structure and code snippets
+        }
+    }
 
 // Kotlin DSL
-tasks.withType<Detekt>().configureEach {
-    jvmTarget = "17"
-}
-tasks.withType<DetektCreateBaselineTask>().configureEach {
-    jvmTarget = "17"
+    tasks.withType<Detekt>().configureEach {
+        jvmTarget = "17"
+    }
+    tasks.withType<DetektCreateBaselineTask>().configureEach {
+        jvmTarget = "17"
+    }
 }
