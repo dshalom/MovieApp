@@ -8,6 +8,7 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.49" apply false
     id("org.jlleitschuh.gradle.ktlint") version "11.1.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.4"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" apply false
 }
 
 buildscript {
