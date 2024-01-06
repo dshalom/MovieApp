@@ -10,11 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.ds.movieapp.BuildConfig.API_KEY
-import com.ds.movieapp.ui.screens.home.HomeContent
+import com.ds.movieapp.ui.screens.main.MainContent
 import com.ds.movieapp.ui.theme.MovieAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -29,9 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeContent()
-
-                    Timber.i("dsds  $API_KEY")
+                    MainContent()
                 }
             }
         }
