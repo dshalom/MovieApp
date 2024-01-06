@@ -1,5 +1,6 @@
 *.iml
 .gradle
+./movieapp.properties
 /local.properties
 /.idea/caches
 /.idea/libraries

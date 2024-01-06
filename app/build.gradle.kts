@@ -1,4 +1,5 @@
 import Versions.ktor_version
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -28,6 +29,10 @@ android {
         buildFeatures {
             buildConfig = true
         }
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("keys.properties").inputStream())
+        buildConfigField("String", "API_KEY", "${properties.getProperty("API_KEY")}")
     }
 
     buildTypes {
@@ -94,4 +99,18 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+
+fun getApiKey(): String {
+    val items = HashMap<String, String>()
+
+    val fl = rootProject.file("./keys.properties")
+
+    (fl.exists()).let {
+        fl.forEachLine {
+            items[it.split("=")[0]] = it.split("=")[1]
+        }
+    }
+
+    return items["API_KEY"]!!
 }

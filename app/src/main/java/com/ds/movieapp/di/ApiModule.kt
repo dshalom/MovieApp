@@ -14,7 +14,12 @@ import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MovieDBBaseUrl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -62,6 +67,7 @@ object ApiModule {
     }
 
     @Provides
+    @MovieDBBaseUrl
     @Singleton
-    fun provideBaseUrl(): String = "https://api.open-meteo.com/v1/forecast"
+    fun provideBaseUrl(): String = "https://api.themoviedb.org/3/"
 }
