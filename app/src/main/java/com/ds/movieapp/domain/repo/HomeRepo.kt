@@ -1,7 +1,7 @@
-package com.ds.movieapp.domain
+package com.ds.movieapp.domain.repo
 
 import com.ds.movieapp.domain.models.Genres
-interface Repo {
+interface HomeRepo {
 
     suspend fun getGenres(): Genres
     fun onCleared()

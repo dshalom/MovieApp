@@ -1,7 +1,9 @@
 package com.ds.movieapp.di
 
-import com.ds.movieapp.data.repo.RepoImpl
-import com.ds.movieapp.domain.Repo
+import com.ds.movieapp.data.homeRepo.HomeRepoImpl
+import com.ds.movieapp.data.profileRepo.ProfileRepoImpl
+import com.ds.movieapp.domain.repo.HomeRepo
+import com.ds.movieapp.domain.repo.ProfileRepo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,7 +15,13 @@ import javax.inject.Singleton
 abstract class AppModule {
     @Binds
     @Singleton
-    abstract fun bindsRepository(
-        tasksRepository: RepoImpl
-    ): Repo
+    abstract fun bindsHomeRepository(
+        tasksRepository: HomeRepoImpl
+    ): HomeRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindsProfileRepository(
+        tasksRepository: ProfileRepoImpl
+    ): ProfileRepo
 }
