@@ -1,5 +1,6 @@
 package com.ds.movieapp.di
 
+import com.ds.movieapp.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -7,10 +8,12 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
+import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
@@ -61,6 +64,13 @@ object ApiModule {
                 onResponse { response ->
                     Timber.d("HTTP status:", "${response.status.value}")
                 }
+            }
+
+            defaultRequest {
+                header(
+                    "Authorization",
+                    "Bearer ${BuildConfig.API_READ_ACCESS_TOKEN}"
+                )
             }
         }
         return client

@@ -33,6 +33,7 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("keys.properties").inputStream())
         buildConfigField("String", "API_KEY", "${properties.getProperty("API_KEY")}")
+        buildConfigField("String", "API_READ_ACCESS_TOKEN", "${properties.getProperty("API_READ_ACCESS_TOKEN")}")
         buildConfigField("String", "USERNAME", "${properties.getProperty("USERNAME")}")
         buildConfigField("String", "PASSWORD", "${properties.getProperty("PASSWORD")}")
     }

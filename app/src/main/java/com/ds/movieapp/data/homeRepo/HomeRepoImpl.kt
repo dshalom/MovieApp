@@ -1,6 +1,5 @@
 package com.ds.movieapp.data.homeRepo
 
-import com.ds.movieapp.BuildConfig
 import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.di.MovieDBBaseUrl
 import com.ds.movieapp.domain.repo.HomeRepo
@@ -14,7 +13,7 @@ class HomeRepoImpl @Inject constructor(
     @MovieDBBaseUrl private val baseUrl: String
 ) : HomeRepo {
     override suspend fun getGenres(): Genres {
-        return client.get("${baseUrl}genre/movie/list?api_key=${BuildConfig.API_KEY}")
+        return client.get("${baseUrl}genre/movie/list")
             .body<Genres>()
     }
 

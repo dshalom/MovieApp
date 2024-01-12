@@ -21,19 +21,19 @@ class ProfileRepoImpl @Inject constructor(
     @MovieDBBaseUrl private val baseUrl: String
 ) : ProfileRepo {
     override suspend fun authorise() {
-        val rt = client.get("$baseUrl/authentication/token/new?api_key=${BuildConfig.API_KEY}")
+        val rt = client.get("$baseUrl/authentication/token/new")
             .body<RequestToken>()
 
         //  val st = client.
         Timber.i("dsds rt: $rt")
 
         val authorisedRequestToken =
-            client.post("$baseUrl/authentication/token/validate_with_login?api_key=${BuildConfig.API_KEY}&request_token=${rt.requestToken}") {
+            client.post("$baseUrl/authentication/token/validate_with_login?request_token=${rt.requestToken}") {
                 contentType(ContentType.Application.Json)
                 setBody("""{"username": "${BuildConfig.USERNAME}", "password" : "${BuildConfig.PASSWORD}" }""")
             }.body<RequestToken>()
 
-        val sessionId = client.post("$baseUrl/authentication/session/new?api_key=${BuildConfig.API_KEY}&request_token=${authorisedRequestToken.requestToken}")
+        val sessionId = client.post("$baseUrl/authentication/session/new?request_token=${authorisedRequestToken.requestToken}")
             .body<SessionId>()
 
         Timber.i("dsds sessionId: $sessionId")
