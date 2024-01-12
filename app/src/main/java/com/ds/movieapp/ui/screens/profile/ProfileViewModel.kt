@@ -15,12 +15,12 @@ class ProfileViewModel @Inject constructor(
 ) : UdfViewModel<ProfileEvent, ProfileUiState, ProfileAction>(
     initialUiState = ProfileUiState(
         authorised = false,
+        requestToken = "",
         error = false
     )
 ) {
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-
         Timber.i("CoroutineExceptionHandler $throwable")
         setUiState {
             copy(
@@ -34,6 +34,14 @@ class ProfileViewModel @Inject constructor(
             when (event) {
                 ProfileEvent.OnAuthoriseClick -> {
                     profileRepo.authorise()
+
+//                    if (requestToken.success) {
+//                        setUiState {
+//                            copy(
+//                                requestToken = requestToken.requestToken
+//                            )
+//                        }
+//                    }
                 }
             }
         }

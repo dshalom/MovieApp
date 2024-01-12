@@ -1,8 +1,8 @@
 package com.ds.movieapp.data.homeRepo
 
 import com.ds.movieapp.BuildConfig
+import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.di.MovieDBBaseUrl
-import com.ds.movieapp.domain.models.Genres
 import com.ds.movieapp.domain.repo.HomeRepo
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

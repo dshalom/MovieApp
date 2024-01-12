@@ -3,6 +3,7 @@ package com.ds.movieapp.data.profileRepo
 import com.ds.movieapp.di.MovieDBBaseUrl
 import com.ds.movieapp.domain.repo.ProfileRepo
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import timber.log.Timber
 import javax.inject.Inject
 
