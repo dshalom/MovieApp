@@ -36,7 +36,6 @@ object ApiModule {
         val client = HttpClient(Android) {
             expectSuccess = true
             engine {
-                // this: AndroidEngineConfig
                 connectTimeout = TIME_OUT
                 socketTimeout = TIME_OUT
             }

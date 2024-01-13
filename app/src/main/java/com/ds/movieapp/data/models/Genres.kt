@@ -1,6 +1,6 @@
 package com.ds.movieapp.data.models
 
-import com.ds.movieapp.BuildConfig
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +16,8 @@ data class Genre(
 
 @Serializable
 data class DSR(
-    val username: String = BuildConfig.USERNAME,
-    val password: String = BuildConfig.PASSWORD
+    val username: String,
+    val password: String,
+    @SerialName("request_token")
+    val requestToken: String
 )
