@@ -1,6 +1,7 @@
 package com.ds.movieapp.ui.screens.home
 
 import androidx.lifecycle.viewModelScope
+import com.ds.movieapp.data.models.MoviesDto
 import com.ds.movieapp.domain.repo.HomeRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
     UdfViewModel<HomeEvent, HomeUiState, HomeAction>(
         initialUiState = HomeUiState(
             genres = emptyList(),
+            movies = MoviesDto(results = emptyList()),
             error = false
         )
     ) {
@@ -30,9 +32,7 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
     }
 
     init {
-
         viewModelScope.launch(exceptionHandler) {
-
             val genres = homeRepo.getGenres()
             setUiState {
                 copy(
@@ -52,8 +52,8 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
                 viewModelScope.launch {
                     val movies = homeRepo.getMoviesByGenre(event.genreId)
 
-                    movies.results.forEach {
-                        Timber.i(it.title)
+                    setUiState {
+                        copy(movies = movies)
                     }
                 }
             }
