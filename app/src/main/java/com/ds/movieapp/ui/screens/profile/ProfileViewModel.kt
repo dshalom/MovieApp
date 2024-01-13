@@ -1,24 +1,37 @@
 package com.ds.movieapp.ui.screens.profile
 
 import androidx.lifecycle.viewModelScope
-import com.ds.movieapp.domain.repo.ProfileRepo
+import com.ds.movieapp.domain.repo.AuthenticationRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileRepo: ProfileRepo
+    private val authenticationRepo: AuthenticationRepo
 ) : UdfViewModel<ProfileEvent, ProfileUiState, ProfileAction>(
     initialUiState = ProfileUiState(
-        authorised = false,
+        loggedIn = false,
         requestToken = "",
         error = false
     )
 ) {
+
+    init {
+        viewModelScope.launch {
+            authenticationRepo.loggedIn().collectLatest { loggedIn ->
+                setUiState {
+                    copy(
+                        loggedIn = loggedIn
+                    )
+                }
+            }
+        }
+    }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.i("CoroutineExceptionHandler $throwable")
@@ -32,8 +45,8 @@ class ProfileViewModel @Inject constructor(
     override fun handleEvent(event: ProfileEvent) {
         viewModelScope.launch(exceptionHandler) {
             when (event) {
-                ProfileEvent.OnAuthoriseClick -> {
-                    profileRepo.authorise()
+                ProfileEvent.OnLoginClick -> {
+                    authenticationRepo.login()
 
 //                    if (requestToken.success) {
 //                        setUiState {
@@ -43,12 +56,16 @@ class ProfileViewModel @Inject constructor(
 //                        }
 //                    }
                 }
+
+                ProfileEvent.OnLogOutClick -> {
+                    authenticationRepo.logout()
+                }
             }
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        profileRepo.onCleared()
+        authenticationRepo.onCleared()
     }
 }
