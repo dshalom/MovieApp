@@ -24,10 +24,14 @@ import com.ds.movieapp.ui.screens.home.HomeContent
 import com.ds.movieapp.ui.screens.home.HomeViewModel
 import com.ds.movieapp.ui.screens.items
 import com.ds.movieapp.ui.screens.profile.ProfileContent
+import com.ds.movieapp.ui.screens.profile.ProfileViewModel
 import com.ds.movieapp.ui.screens.search.SearchContent
 
 @Composable
-fun MainContent(homeViewModel: HomeViewModel = hiltViewModel()) {
+fun MainContent(
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -47,7 +51,13 @@ fun MainContent(homeViewModel: HomeViewModel = hiltViewModel()) {
                     event = homeViewModel::handleEvent
                 )
             }
-            composable(Screen.ProfileScreen.route) { ProfileContent() }
+            composable(Screen.ProfileScreen.route) {
+                val profileUiState = profileViewModel.uiState.rememberCollectWithLifecycle()
+                ProfileContent(
+                    profileUiState = profileUiState.value,
+                    event = profileViewModel::handleEvent
+                )
+            }
             composable(Screen.SearchScreen.route) { SearchContent() }
         }
     }

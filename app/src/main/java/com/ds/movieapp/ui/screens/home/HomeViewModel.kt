@@ -1,38 +1,21 @@
 package com.ds.movieapp.ui.screens.home
 
 import androidx.lifecycle.viewModelScope
-import com.ds.movieapp.domain.Repo
+import com.ds.movieapp.domain.repo.HomeRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.request.get
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import timber.log.Timber
 import javax.inject.Inject
 
-@Serializable
-data class Resp(
-    val quotes: List<Quote>,
-    val total: Int,
-    val skip: Int,
-    val limit: Int
-)
-
-@Serializable
-data class Quote(
-    val id: Int,
-    val quote: String,
-    val author: String
-)
-
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repo: Repo) :
+class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
 
     UdfViewModel<HomeEvent, HomeUiState, HomeAction>(
         initialUiState = HomeUiState(
             genres = emptyList(),
-            e = false
+            error = false
         )
     ) {
 
@@ -41,7 +24,7 @@ class HomeViewModel @Inject constructor(private val repo: Repo) :
         Timber.i("CoroutineExceptionHandler $throwable")
         setUiState {
             copy(
-                e = true
+                error = true
             )
         }
     }
@@ -50,10 +33,10 @@ class HomeViewModel @Inject constructor(private val repo: Repo) :
 
         viewModelScope.launch(exceptionHandler) {
 
-            val g = repo.getGenres()
+            val genres = homeRepo.getGenres()
             setUiState {
                 copy(
-                    genres = g.genres.map { it.name }
+                    genres = genres.genres.map { it.name }
                 )
             }
         }
@@ -69,6 +52,6 @@ class HomeViewModel @Inject constructor(private val repo: Repo) :
 
     override fun onCleared() {
         super.onCleared()
-        repo.onCleared()
+        homeRepo.onCleared()
     }
 }
