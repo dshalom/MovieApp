@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
             val genres = homeRepo.getGenres()
             setUiState {
                 copy(
-                    genres = genres.genres.map { it.name }
+                    genres = genres.genres
                 )
             }
         }
@@ -44,8 +44,18 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo) :
 
     override fun handleEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.OnUpButtonClick -> sendAction {
+            HomeEvent.OnUpButtonClicked -> sendAction {
                 HomeAction.NavigateBack
+            }
+
+            is HomeEvent.OnGenreClicked -> {
+                viewModelScope.launch {
+                    val movies = homeRepo.getMoviesByGenre(event.genreId)
+
+                    movies.results.forEach {
+                        Timber.i(it.title)
+                    }
+                }
             }
         }
     }

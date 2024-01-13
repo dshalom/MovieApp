@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ds.movieapp.data.models.Genre
 
 @Composable
 fun HomeContent(
@@ -50,20 +51,21 @@ fun HomeContent(
                 }
                 item {
                     GenreChips(titles = homeUiState.genres) {
+                        event(HomeEvent.OnGenreClicked(it))
                     }
                 }
             }
         }
 
-        event(HomeEvent.OnUpButtonClick)
+        event(HomeEvent.OnUpButtonClicked)
     }
 }
 
 @Composable
 fun GenreChips(
-    titles: List<String>,
+    titles: List<Genre>,
     modifier: Modifier = Modifier,
-    onGenreSelected: (String) -> Unit
+    onGenreClicked: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     var selectedIndex by rememberSaveable {
@@ -76,9 +78,9 @@ fun GenreChips(
             .horizontalScroll(scrollState)
     ) {
         titles.forEachIndexed { index, genre ->
-            GenreChip(genre, selectedIndex == index) {
+            GenreChip(genre.name, selectedIndex == index) {
                 selectedIndex = index
-                onGenreSelected(genre)
+                onGenreClicked(genre.id.toString())
             }
         }
     }
