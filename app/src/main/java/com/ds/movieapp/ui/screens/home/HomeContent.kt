@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +27,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.ds.movieapp.data.models.Genre
+import com.ds.movieapp.domain.models.Movie
 
 @Composable
 fun HomeContent(
@@ -50,20 +58,52 @@ fun HomeContent(
                 }
                 item {
                     GenreChips(titles = homeUiState.genres) {
+                        event(HomeEvent.OnGenreClicked(it))
                     }
+                }
+                item {
+                    Movies(movies = homeUiState.movies)
                 }
             }
         }
 
-        event(HomeEvent.OnUpButtonClick)
+        event(HomeEvent.OnUpButtonClicked)
+    }
+}
+
+@Composable
+fun Movies(movies: List<Movie>) {
+    LazyRow(modifier = Modifier.fillMaxWidth()) {
+        items(movies) { movie ->
+            Movie(movie)
+        }
+    }
+}
+
+@Composable
+fun Movie(movie: Movie) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier.size(200.dp, 300.dp)
+    ) {
+        AsyncImage(
+            model = movie.posterPath,
+            contentDescription = null
+        )
+        Text(
+            text = movie.title,
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 }
 
 @Composable
 fun GenreChips(
-    titles: List<String>,
+    titles: List<Genre>,
     modifier: Modifier = Modifier,
-    onGenreSelected: (String) -> Unit
+    onGenreClicked: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     var selectedIndex by rememberSaveable {
@@ -76,9 +116,9 @@ fun GenreChips(
             .horizontalScroll(scrollState)
     ) {
         titles.forEachIndexed { index, genre ->
-            GenreChip(genre, selectedIndex == index) {
+            GenreChip(genre.name, selectedIndex == index) {
                 selectedIndex = index
-                onGenreSelected(genre)
+                onGenreClicked(genre.id.toString())
             }
         }
     }

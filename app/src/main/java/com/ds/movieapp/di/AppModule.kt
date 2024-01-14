@@ -1,8 +1,8 @@
 package com.ds.movieapp.di
 
 import com.ds.movieapp.data.homeRepo.HomeRepoImpl
-import com.ds.movieapp.data.homeRepo.SessionRepo
-import com.ds.movieapp.data.homeRepo.SessionRepoImpl
+import com.ds.movieapp.data.homeRepo.StoreRepo
+import com.ds.movieapp.data.homeRepo.StoreRepoImpl
 import com.ds.movieapp.data.profileRepo.AuthenticationRepoImpl
 import com.ds.movieapp.domain.repo.AuthenticationRepo
 import com.ds.movieapp.domain.repo.HomeRepo
@@ -30,6 +30,6 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindsSessionRepo(
-        tasksRepository: SessionRepoImpl
-    ): SessionRepo
+        tasksRepository: StoreRepoImpl
+    ): StoreRepo
 }

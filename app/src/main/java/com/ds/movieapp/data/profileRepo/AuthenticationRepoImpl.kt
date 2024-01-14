@@ -1,7 +1,7 @@
 package com.ds.movieapp.data.profileRepo
 
 import com.ds.movieapp.BuildConfig
-import com.ds.movieapp.data.homeRepo.SessionRepo
+import com.ds.movieapp.data.homeRepo.StoreRepo
 import com.ds.movieapp.data.models.LoginDetails
 import com.ds.movieapp.data.models.LogoutDetails
 import com.ds.movieapp.data.models.RequestToken
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class AuthenticationRepoImpl @Inject constructor(
     private val client: HttpClient,
-    private val sessionRepo: SessionRepo,
+    private val storeRepo: StoreRepo,
     @MovieDBBaseUrl
     private val baseUrl: String
 ) : AuthenticationRepo {
@@ -45,11 +45,11 @@ class AuthenticationRepoImpl @Inject constructor(
             client.post("$baseUrl/authentication/session/new?request_token=${authorisedRequestToken.requestToken}")
                 .body<SessionId>()
 
-        sessionRepo.storeSessionId(sessionId.sessionId)
+        storeRepo.setSessionId(sessionId.sessionId)
     }
 
     override suspend fun logout() {
-        sessionRepo.getSessionId()?.let { sessionId ->
+        storeRepo.getSessionId()?.let { sessionId ->
             client.delete("$baseUrl/authentication/session") {
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -57,7 +57,7 @@ class AuthenticationRepoImpl @Inject constructor(
                 )
             }
         }
-        sessionRepo.logout()
+        storeRepo.logout()
     }
 
     override fun onCleared() {
@@ -65,6 +65,6 @@ class AuthenticationRepoImpl @Inject constructor(
     }
 
     override suspend fun loggedIn(): Flow<Boolean> {
-        return sessionRepo.observeLoggedIn()
+        return storeRepo.observeLoggedIn()
     }
 }
