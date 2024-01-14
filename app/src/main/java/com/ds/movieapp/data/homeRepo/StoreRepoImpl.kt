@@ -10,25 +10,25 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
-interface SessionRepo {
-    suspend fun storeSessionId(sessionId: String)
+interface StoreRepo {
+    suspend fun setSessionId(sessionId: String)
     suspend fun getSessionId(): String?
     suspend fun observeLoggedIn(): Flow<Boolean>
+    suspend fun setBaseUrl(baseUrl: String)
+    suspend fun getBaseUrl(): String?
     suspend fun logout()
 }
 
-class SessionRepoImpl @Inject constructor(@ApplicationContext val context: Context) : SessionRepo {
+class StoreRepoImpl @Inject constructor(@ApplicationContext val context: Context) : StoreRepo {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SETTINGS)
     private val sessionIdKey: Preferences.Key<String> = stringPreferencesKey(SESSION_KEY)
+    private val baseUrlKey: Preferences.Key<String> = stringPreferencesKey(BASE_URL_KEY)
 
-    override suspend fun storeSessionId(sessionId: String) {
+    override suspend fun setSessionId(sessionId: String) {
         context.dataStore.edit { settings ->
-            Timber.i("setting session to $sessionId")
-
             settings[sessionIdKey] = sessionId
         }
     }
@@ -44,6 +44,17 @@ class SessionRepoImpl @Inject constructor(@ApplicationContext val context: Conte
         }
     }
 
+    override suspend fun setBaseUrl(baseUrl: String) {
+        context.dataStore.edit { settings ->
+            settings[baseUrlKey] = baseUrl
+        }
+    }
+
+    override suspend fun getBaseUrl(): String? {
+        return context.dataStore
+            .data.first()[baseUrlKey]
+    }
+
     override suspend fun logout() {
         context.dataStore.edit { settings ->
             settings[sessionIdKey] = ""
@@ -53,5 +64,6 @@ class SessionRepoImpl @Inject constructor(@ApplicationContext val context: Conte
     companion object {
         private const val SETTINGS = "settings"
         private const val SESSION_KEY = "sessionKey"
+        private const val BASE_URL_KEY = "baseUrlKey"
     }
 }

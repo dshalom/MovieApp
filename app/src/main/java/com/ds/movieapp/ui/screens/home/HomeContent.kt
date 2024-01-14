@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +27,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.ds.movieapp.data.models.Genre
-import com.ds.movieapp.data.models.MoviesDto
+import com.ds.movieapp.domain.models.Movie
 
 @Composable
 fun HomeContent(
@@ -58,7 +62,7 @@ fun HomeContent(
                     }
                 }
                 item {
-                    Movies(moviesDto = homeUiState.movies)
+                    Movies(movies = homeUiState.movies)
                 }
             }
         }
@@ -68,14 +72,30 @@ fun HomeContent(
 }
 
 @Composable
-fun Movies(moviesDto: MoviesDto) {
+fun Movies(movies: List<Movie>) {
     LazyRow(modifier = Modifier.fillMaxWidth()) {
-        items(moviesDto.results) { movie ->
-            Text(
-                text = movie.title,
-                style = MaterialTheme.typography.headlineMedium
-            )
+        items(movies) { movie ->
+            Movie(movie)
         }
+    }
+}
+
+@Composable
+fun Movie(movie: Movie) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier.size(200.dp, 300.dp)
+    ) {
+        AsyncImage(
+            model = movie.posterPath,
+            contentDescription = null
+        )
+        Text(
+            text = movie.title,
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 }
 
