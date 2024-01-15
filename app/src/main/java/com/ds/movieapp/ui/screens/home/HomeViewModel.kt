@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
             val movies = homeRepo.getMoviesByGenre(genres.genres.first().id.toString())
             setUiState {
                 copy(
-                    movies = movies
+                    movies = movies.take(5)
                 )
             }
         }
@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(
                     val movies = homeRepo.getMoviesByGenre(event.genreId)
 
                     setUiState {
-                        copy(movies = movies)
+                        copy(movies = movies.take(5))
                     }
                 }
             }
