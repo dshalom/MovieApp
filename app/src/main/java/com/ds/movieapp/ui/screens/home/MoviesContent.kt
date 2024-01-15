@@ -1,9 +1,9 @@
 package com.ds.movieapp.ui.screens.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
@@ -24,7 +24,10 @@ import com.ds.movieapp.ui.theme.MovieAppTheme
 
 @Composable
 fun Movies(movies: List<Movie>) {
-    LazyRow(modifier = Modifier.fillMaxWidth()) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(movies) { movie ->
             Movie(movie)
         }
@@ -44,6 +47,7 @@ fun Movie(movie: Movie) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .size(width = 200.dp, height = 340.dp)
+
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
