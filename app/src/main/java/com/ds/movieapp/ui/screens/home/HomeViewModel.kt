@@ -2,7 +2,7 @@ package com.ds.movieapp.ui.screens.home
 
 import androidx.lifecycle.viewModelScope
 import com.ds.movieapp.data.homeRepo.StoreRepo
-import com.ds.movieapp.domain.repo.HomeRepo
+import com.ds.movieapp.domain.repo.MoviesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepo: HomeRepo,
+    private val moviesRepo: MoviesRepo,
     private val storeRepo: StoreRepo
 ) :
 
@@ -36,16 +36,16 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch(exceptionHandler) {
 
-            val config = homeRepo.getConfiguration()
+            val config = moviesRepo.getConfiguration()
             storeRepo.setBaseUrl(config.images.baseUrl)
 
-            val genres = homeRepo.getGenres()
+            val genres = moviesRepo.getGenres()
             setUiState {
                 copy(
                     genres = genres.genres
                 )
             }
-            val movies = homeRepo.getMoviesByGenre(genres.genres.first().id.toString())
+            val movies = moviesRepo.getMoviesByGenre(genres.genres.first().id.toString())
             setUiState {
                 copy(
                     movies = movies.take(5)
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 viewModelScope.launch {
-                    val movies = homeRepo.getMoviesByGenre(event.genreId.toString())
+                    val movies = moviesRepo.getMoviesByGenre(event.genreId.toString())
 
                     setUiState {
                         copy(movies = movies.take(5))
@@ -77,6 +77,6 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        homeRepo.onCleared()
+        moviesRepo.onCleared()
     }
 }
