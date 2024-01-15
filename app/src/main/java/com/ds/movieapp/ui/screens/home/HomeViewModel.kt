@@ -62,12 +62,15 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 viewModelScope.launch {
-                    val movies = homeRepo.getMoviesByGenre(event.genreId)
+                    val movies = homeRepo.getMoviesByGenre(event.genreId.toString())
 
                     setUiState {
                         copy(movies = movies.take(5))
                     }
                 }
+            }
+
+            is HomeEvent.OnSeeAllClicked -> {
             }
         }
     }

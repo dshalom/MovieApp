@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class Screen(
     val route: String,
     val title: String,
-    val selectedIcon: ImageVector,
-    val unSelectedIcon: ImageVector
+    val selectedIcon: ImageVector? = null,
+    val unSelectedIcon: ImageVector? = null
 ) {
     data object TasksScreen : Screen(
         route = "home",
@@ -27,6 +27,11 @@ sealed class Screen(
         title = "Search",
         selectedIcon = Icons.Filled.Search,
         unSelectedIcon = Icons.Outlined.Search
+    )
+
+    data object GridScreen : Screen(
+        route = "grid",
+        title = "Grid"
     )
 
     data object ProfileScreen : Screen(

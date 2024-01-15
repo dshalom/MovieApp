@@ -23,13 +23,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.ds.movieapp.data.models.Genre
+import com.ds.movieapp.ui.screens.Screen
 
 @Composable
 fun HomeContent(
     homeUiState: HomeUiState,
+    navController: NavHostController,
     event: (HomeEvent) -> Unit
 ) {
+    var selectedId by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
@@ -44,13 +51,19 @@ fun HomeContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
-                    GenreChips(titles = homeUiState.genres) {
+                    GenreChips(
+                        titles = homeUiState.genres,
+                        homeUiState.genres.firstOrNull()?.id ?: 0
+                    ) {
                         event(HomeEvent.OnGenreClicked(it))
+                        selectedId = it
                     }
                 }
                 item {
                     Row(
-                        Modifier.fillMaxWidth().padding(16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -59,7 +72,10 @@ fun HomeContent(
                             style = MaterialTheme.typography.titleLarge
                         )
                         Button(
-                            onClick = { /*TODO*/ },
+
+                            onClick = {
+                                navController.navigate("${Screen.GridScreen.route}/$selectedId")
+                            },
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Text(
@@ -74,31 +90,26 @@ fun HomeContent(
                 }
             }
         }
-
-        event(HomeEvent.OnUpButtonClicked)
     }
 }
 
 @Composable
 fun GenreChips(
     titles: List<Genre>,
+    selectedId: Int,
     modifier: Modifier = Modifier,
-    onGenreClicked: (String) -> Unit
+    onGenreClicked: (Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var selectedIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(scrollState)
     ) {
-        titles.forEachIndexed { index, genre ->
-            GenreChip(genre.name, selectedIndex == index) {
-                selectedIndex = index
-                onGenreClicked(genre.id.toString())
+        titles.forEach { genre ->
+            GenreChip(genre.name, genre.id == selectedId) {
+                onGenreClicked(genre.id)
             }
         }
     }

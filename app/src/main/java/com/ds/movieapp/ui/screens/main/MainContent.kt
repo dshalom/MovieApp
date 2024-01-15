@@ -15,11 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ds.movieapp.ui.screens.Screen
 import com.ds.movieapp.ui.screens.common.viewmodel.rememberCollectWithLifecycle
+import com.ds.movieapp.ui.screens.grid.GridContent
+import com.ds.movieapp.ui.screens.grid.GridViewModel
 import com.ds.movieapp.ui.screens.home.HomeContent
 import com.ds.movieapp.ui.screens.home.HomeViewModel
 import com.ds.movieapp.ui.screens.items
@@ -30,12 +34,13 @@ import com.ds.movieapp.ui.screens.search.SearchContent
 @Composable
 fun MainContent(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    gridViewModel: GridViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
 
     Scaffold(
-        bottomBar = { DoingNavigationBar(navController) }
+        bottomBar = { MoviesNavigationBar(navController) }
 
     ) { paddingValues ->
 
@@ -48,6 +53,7 @@ fun MainContent(
                 val homeUiState = homeViewModel.uiState.rememberCollectWithLifecycle()
                 HomeContent(
                     homeUiState = homeUiState.value,
+                    navController,
                     event = homeViewModel::handleEvent
                 )
             }
@@ -58,13 +64,26 @@ fun MainContent(
                     event = profileViewModel::handleEvent
                 )
             }
+            composable(
+                "${Screen.GridScreen.route}/{genreId}",
+                arguments = listOf(
+                    navArgument("genreId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val gridUiState = gridViewModel.uiState.rememberCollectWithLifecycle()
+                GridContent(
+                    backStackEntry.arguments?.getString("genreId") ?: "",
+                    gridUiState.value,
+                    event = gridViewModel::handleEvent
+                )
+            }
             composable(Screen.SearchScreen.route) { SearchContent() }
         }
     }
 }
 
 @Composable
-fun DoingNavigationBar(navController: NavHostController) {
+fun MoviesNavigationBar(navController: NavHostController) {
     var selectedItem by remember { mutableIntStateOf(0) }
 
     NavigationBar {
@@ -84,10 +103,12 @@ fun DoingNavigationBar(navController: NavHostController) {
                     }
                 },
                 icon = {
-                    Icon(
-                        imageVector = if (selected) screen.selectedIcon else screen.unSelectedIcon,
-                        contentDescription = screen.title
-                    )
+                    (if (selected) screen.selectedIcon else screen.unSelectedIcon)?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = screen.title
+                        )
+                    }
                 },
                 label = { Text(text = screen.title) }
             )

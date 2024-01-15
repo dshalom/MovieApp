@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GridContent(
+    genreId: String,
     gridUiState: GridUiState,
     event: (GridEvent) -> Unit
 ) {
@@ -29,7 +30,7 @@ fun GridContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
-                    Text(text = "grid")
+                    Text(text = "grid  $genreId")
                 }
             }
         }
