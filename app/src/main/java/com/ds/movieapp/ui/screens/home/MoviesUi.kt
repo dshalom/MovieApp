@@ -1,6 +1,8 @@
 package com.ds.movieapp.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -13,13 +15,19 @@ import com.ds.movieapp.ui.screens.common.components.MovieUi
 import com.ds.movieapp.ui.theme.MovieAppTheme
 
 @Composable
-fun MoviesUi(movies: List<Movie>) {
+fun MoviesUi(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movies) { movie ->
-            MovieUi(movie)
+            Box(
+                modifier = Modifier.clickable {
+                    onMovieClicked(movie.id.toString())
+                }
+            ) {
+                MovieUi(movie)
+            }
         }
     }
 }
@@ -43,6 +51,6 @@ fun MoviesPreview() {
                     voteAverage = 9.0
                 )
             )
-        )
+        ) {}
     }
 }
