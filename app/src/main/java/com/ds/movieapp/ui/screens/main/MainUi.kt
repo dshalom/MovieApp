@@ -22,6 +22,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ds.movieapp.ui.screens.Screen
 import com.ds.movieapp.ui.screens.common.viewmodel.rememberCollectWithLifecycle
+import com.ds.movieapp.ui.screens.details.DetailsUi
+import com.ds.movieapp.ui.screens.details.DetailsViewModel
 import com.ds.movieapp.ui.screens.grid.GridUi
 import com.ds.movieapp.ui.screens.grid.GridViewModel
 import com.ds.movieapp.ui.screens.home.HomeUi
@@ -35,7 +37,8 @@ import com.ds.movieapp.ui.screens.search.SearchUi
 fun MainUi(
     homeViewModel: HomeViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
-    gridViewModel: GridViewModel = hiltViewModel()
+    gridViewModel: GridViewModel = hiltViewModel(),
+    detailsViewModel: DetailsViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
 
@@ -74,7 +77,22 @@ fun MainUi(
                 GridUi(
                     backStackEntry.arguments?.getString("genreId") ?: "",
                     gridUiState.value,
+                    navController,
                     event = gridViewModel::handleEvent
+                )
+            }
+            composable(
+                "${Screen.DetailsScreen.route}/{movieId}",
+                arguments = listOf(
+                    navArgument("movieId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val detailsUiState = detailsViewModel.uiState.rememberCollectWithLifecycle()
+                DetailsUi(
+                    backStackEntry.arguments?.getString("movieId") ?: "",
+                    detailsUiState.value,
+                    navController,
+                    event = detailsViewModel::handleEvent
                 )
             }
             composable(Screen.SearchScreen.route) { SearchUi() }

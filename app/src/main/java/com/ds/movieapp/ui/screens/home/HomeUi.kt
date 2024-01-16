@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.ds.movieapp.data.models.Genre
 import com.ds.movieapp.ui.screens.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeUi(
     homeUiState: HomeUiState,
@@ -34,6 +36,12 @@ fun HomeUi(
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "Movies",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            })
         }
     ) { paddingValues ->
         Box(
@@ -79,7 +87,9 @@ fun HomeUi(
                     }
                 }
                 item {
-                    MoviesUi(movies = homeUiState.movies)
+                    MoviesUi(movies = homeUiState.movies) {
+                        navController.navigate("${Screen.DetailsScreen.route}/$it")
+                    }
                 }
             }
         }

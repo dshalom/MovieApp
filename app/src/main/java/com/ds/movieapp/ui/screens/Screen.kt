@@ -34,6 +34,11 @@ sealed class Screen(
         title = "Grid"
     )
 
+    data object DetailsScreen : Screen(
+        route = "details",
+        title = "Details"
+    )
+
     data object ProfileScreen : Screen(
         route = "profile",
         title = "Profile",

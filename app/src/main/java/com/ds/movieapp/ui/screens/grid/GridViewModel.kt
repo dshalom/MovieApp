@@ -43,7 +43,6 @@ class GridViewModel @Inject constructor(
                     genreId = event.genreId
                     job = viewModelScope.launch {
                         val movies = moviesRepo.getMoviesByGenre(event.genreId)
-                        Timber.i("dsds fetchMovies s = ${movies.size}")
                         setUiState {
                             copy(movies = movies)
                         }
