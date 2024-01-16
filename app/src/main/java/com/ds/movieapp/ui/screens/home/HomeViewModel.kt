@@ -42,7 +42,8 @@ class HomeViewModel @Inject constructor(
             val genres = moviesRepo.getGenres()
             setUiState {
                 copy(
-                    genres = genres.genres
+                    genres = genres.genres,
+                    selectedGenre = genres.genres.first().id
                 )
             }
             val movies = moviesRepo.getMoviesByGenre(genres.genres.first().id.toString())
@@ -65,7 +66,7 @@ class HomeViewModel @Inject constructor(
                     val movies = moviesRepo.getMoviesByGenre(event.genreId.toString())
 
                     setUiState {
-                        copy(movies = movies.take(5))
+                        copy(movies = movies.take(5), selectedGenre = event.genreId)
                     }
                 }
             }

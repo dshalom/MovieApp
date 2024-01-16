@@ -17,8 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +26,11 @@ import com.ds.movieapp.data.models.Genre
 import com.ds.movieapp.ui.screens.Screen
 
 @Composable
-fun HomeContent(
+fun HomeUi(
     homeUiState: HomeUiState,
     navController: NavHostController,
     event: (HomeEvent) -> Unit
 ) {
-    var selectedId by rememberSaveable {
-        mutableIntStateOf(0)
-    }
-
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
@@ -56,7 +50,6 @@ fun HomeContent(
                         homeUiState.genres.firstOrNull()?.id ?: 0
                     ) {
                         event(HomeEvent.OnGenreClicked(it))
-                        selectedId = it
                     }
                 }
                 item {
@@ -74,7 +67,7 @@ fun HomeContent(
                         Button(
 
                             onClick = {
-                                navController.navigate("${Screen.GridScreen.route}/$selectedId")
+                                navController.navigate("${Screen.GridScreen.route}/${homeUiState.selectedGenre}")
                             },
                             shape = MaterialTheme.shapes.medium
                         ) {
@@ -86,7 +79,7 @@ fun HomeContent(
                     }
                 }
                 item {
-                    Movies(movies = homeUiState.movies)
+                    MoviesUi(movies = homeUiState.movies)
                 }
             }
         }

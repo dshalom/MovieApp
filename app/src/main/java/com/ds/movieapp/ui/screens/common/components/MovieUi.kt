@@ -1,11 +1,7 @@
-package com.ds.movieapp.ui.screens.home
+package com.ds.movieapp.ui.screens.common.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -15,27 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.Movie
-import com.ds.movieapp.ui.theme.MovieAppTheme
 
 @Composable
-fun Movies(movies: List<Movie>) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(movies) { movie ->
-            Movie(movie)
-        }
-    }
-}
-
-@Composable
-fun Movie(movie: Movie) {
+fun MovieUi(movie: Movie) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -63,28 +45,5 @@ fun Movie(movie: Movie) {
                 textAlign = TextAlign.Center
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MoviesPreview() {
-    MovieAppTheme {
-        Movies(
-            listOf(
-                Movie(
-                    adult = false,
-                    backdropPath = "",
-                    genreIds = emptyList(),
-                    id = 0,
-                    overview = "",
-                    popularity = 3.0,
-                    posterPath = "https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg",
-                    releaseDate = "",
-                    title = "Aquaman and the Lost Kingdom",
-                    voteAverage = 9.0
-                )
-            )
-        )
     }
 }

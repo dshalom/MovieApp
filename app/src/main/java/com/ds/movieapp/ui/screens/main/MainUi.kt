@@ -22,17 +22,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ds.movieapp.ui.screens.Screen
 import com.ds.movieapp.ui.screens.common.viewmodel.rememberCollectWithLifecycle
-import com.ds.movieapp.ui.screens.grid.GridContent
+import com.ds.movieapp.ui.screens.grid.GridUi
 import com.ds.movieapp.ui.screens.grid.GridViewModel
-import com.ds.movieapp.ui.screens.home.HomeContent
+import com.ds.movieapp.ui.screens.home.HomeUi
 import com.ds.movieapp.ui.screens.home.HomeViewModel
 import com.ds.movieapp.ui.screens.items
-import com.ds.movieapp.ui.screens.profile.ProfileContent
+import com.ds.movieapp.ui.screens.profile.ProfileUi
 import com.ds.movieapp.ui.screens.profile.ProfileViewModel
-import com.ds.movieapp.ui.screens.search.SearchContent
+import com.ds.movieapp.ui.screens.search.SearchUi
 
 @Composable
-fun MainContent(
+fun MainUi(
     homeViewModel: HomeViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
     gridViewModel: GridViewModel = hiltViewModel()
@@ -51,7 +51,7 @@ fun MainContent(
         ) {
             composable(Screen.TasksScreen.route) {
                 val homeUiState = homeViewModel.uiState.rememberCollectWithLifecycle()
-                HomeContent(
+                HomeUi(
                     homeUiState = homeUiState.value,
                     navController,
                     event = homeViewModel::handleEvent
@@ -59,7 +59,7 @@ fun MainContent(
             }
             composable(Screen.ProfileScreen.route) {
                 val profileUiState = profileViewModel.uiState.rememberCollectWithLifecycle()
-                ProfileContent(
+                ProfileUi(
                     profileUiState = profileUiState.value,
                     event = profileViewModel::handleEvent
                 )
@@ -71,13 +71,13 @@ fun MainContent(
                 )
             ) { backStackEntry ->
                 val gridUiState = gridViewModel.uiState.rememberCollectWithLifecycle()
-                GridContent(
+                GridUi(
                     backStackEntry.arguments?.getString("genreId") ?: "",
                     gridUiState.value,
                     event = gridViewModel::handleEvent
                 )
             }
-            composable(Screen.SearchScreen.route) { SearchContent() }
+            composable(Screen.SearchScreen.route) { SearchUi() }
         }
     }
 }
