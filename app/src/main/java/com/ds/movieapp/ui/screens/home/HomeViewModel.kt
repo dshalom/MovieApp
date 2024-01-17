@@ -1,7 +1,7 @@
 package com.ds.movieapp.ui.screens.home
 
 import androidx.lifecycle.viewModelScope
-import com.ds.movieapp.data.homeRepo.StoreRepo
+import com.ds.movieapp.data.repo.homeRepo.StoreRepo
 import com.ds.movieapp.domain.repo.MoviesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

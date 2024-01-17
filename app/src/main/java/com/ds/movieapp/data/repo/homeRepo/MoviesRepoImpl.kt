@@ -1,4 +1,4 @@
-package com.ds.movieapp.data.homeRepo
+package com.ds.movieapp.data.repo.homeRepo
 
 import com.ds.movieapp.data.models.ConfigurationDto
 import com.ds.movieapp.data.models.Genres

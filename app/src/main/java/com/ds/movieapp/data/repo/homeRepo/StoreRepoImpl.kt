@@ -1,4 +1,4 @@
-package com.ds.movieapp.data.homeRepo
+package com.ds.movieapp.data.repo.homeRepo
 
 import android.content.Context
 import androidx.datastore.core.DataStore
