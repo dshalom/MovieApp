@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProfileContent(
+fun ProfileUi(
     profileUiState: ProfileUiState,
     event: (ProfileEvent) -> Unit
 ) {

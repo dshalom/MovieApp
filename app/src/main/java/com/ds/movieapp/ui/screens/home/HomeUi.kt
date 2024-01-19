@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -17,22 +18,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.ds.movieapp.data.models.Genre
+import com.ds.movieapp.ui.screens.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(
+fun HomeUi(
     homeUiState: HomeUiState,
+    navController: NavHostController,
     event: (HomeEvent) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
+            CenterAlignedTopAppBar(title = {
+                Text(
+                    text = "Movies",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            })
         }
     ) { paddingValues ->
         Box(
@@ -44,13 +53,18 @@ fun HomeContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
-                    GenreChips(titles = homeUiState.genres) {
+                    GenreChips(
+                        titles = homeUiState.genres,
+                        homeUiState.genres.firstOrNull()?.id ?: 0
+                    ) {
                         event(HomeEvent.OnGenreClicked(it))
                     }
                 }
                 item {
                     Row(
-                        Modifier.fillMaxWidth().padding(16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -59,7 +73,10 @@ fun HomeContent(
                             style = MaterialTheme.typography.titleLarge
                         )
                         Button(
-                            onClick = { /*TODO*/ },
+
+                            onClick = {
+                                navController.navigate("${Screen.GridScreen.route}/${homeUiState.selectedGenre}")
+                            },
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Text(
@@ -70,35 +87,32 @@ fun HomeContent(
                     }
                 }
                 item {
-                    Movies(movies = homeUiState.movies)
+                    MoviesUi(movies = homeUiState.movies) {
+                        navController.navigate("${Screen.DetailsScreen.route}/$it")
+                    }
                 }
             }
         }
-
-        event(HomeEvent.OnUpButtonClicked)
     }
 }
 
 @Composable
 fun GenreChips(
     titles: List<Genre>,
+    selectedId: Int,
     modifier: Modifier = Modifier,
-    onGenreClicked: (String) -> Unit
+    onGenreClicked: (Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var selectedIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(scrollState)
     ) {
-        titles.forEachIndexed { index, genre ->
-            GenreChip(genre.name, selectedIndex == index) {
-                selectedIndex = index
-                onGenreClicked(genre.id.toString())
+        titles.forEach { genre ->
+            GenreChip(genre.name, genre.id == selectedId) {
+                onGenreClicked(genre.id)
             }
         }
     }

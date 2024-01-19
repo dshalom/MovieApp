@@ -15,27 +15,35 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ds.movieapp.ui.screens.Screen
 import com.ds.movieapp.ui.screens.common.viewmodel.rememberCollectWithLifecycle
-import com.ds.movieapp.ui.screens.home.HomeContent
+import com.ds.movieapp.ui.screens.details.DetailsUi
+import com.ds.movieapp.ui.screens.details.DetailsViewModel
+import com.ds.movieapp.ui.screens.grid.GridUi
+import com.ds.movieapp.ui.screens.grid.GridViewModel
+import com.ds.movieapp.ui.screens.home.HomeUi
 import com.ds.movieapp.ui.screens.home.HomeViewModel
 import com.ds.movieapp.ui.screens.items
-import com.ds.movieapp.ui.screens.profile.ProfileContent
+import com.ds.movieapp.ui.screens.profile.ProfileUi
 import com.ds.movieapp.ui.screens.profile.ProfileViewModel
-import com.ds.movieapp.ui.screens.search.SearchContent
+import com.ds.movieapp.ui.screens.search.SearchUi
 
 @Composable
-fun MainContent(
+fun MainUi(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    gridViewModel: GridViewModel = hiltViewModel(),
+    detailsViewModel: DetailsViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
 
     Scaffold(
-        bottomBar = { DoingNavigationBar(navController) }
+        bottomBar = { MoviesNavigationBar(navController) }
 
     ) { paddingValues ->
 
@@ -46,25 +54,54 @@ fun MainContent(
         ) {
             composable(Screen.TasksScreen.route) {
                 val homeUiState = homeViewModel.uiState.rememberCollectWithLifecycle()
-                HomeContent(
+                HomeUi(
                     homeUiState = homeUiState.value,
+                    navController,
                     event = homeViewModel::handleEvent
                 )
             }
             composable(Screen.ProfileScreen.route) {
                 val profileUiState = profileViewModel.uiState.rememberCollectWithLifecycle()
-                ProfileContent(
+                ProfileUi(
                     profileUiState = profileUiState.value,
                     event = profileViewModel::handleEvent
                 )
             }
-            composable(Screen.SearchScreen.route) { SearchContent() }
+            composable(
+                "${Screen.GridScreen.route}/{genreId}",
+                arguments = listOf(
+                    navArgument("genreId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val gridUiState = gridViewModel.uiState.rememberCollectWithLifecycle()
+                GridUi(
+                    backStackEntry.arguments?.getString("genreId") ?: "",
+                    gridUiState.value,
+                    navController,
+                    event = gridViewModel::handleEvent
+                )
+            }
+            composable(
+                "${Screen.DetailsScreen.route}/{movieId}",
+                arguments = listOf(
+                    navArgument("movieId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val detailsUiState = detailsViewModel.uiState.rememberCollectWithLifecycle()
+                DetailsUi(
+                    backStackEntry.arguments?.getString("movieId") ?: "",
+                    detailsUiState.value,
+                    navController,
+                    event = detailsViewModel::handleEvent
+                )
+            }
+            composable(Screen.SearchScreen.route) { SearchUi() }
         }
     }
 }
 
 @Composable
-fun DoingNavigationBar(navController: NavHostController) {
+fun MoviesNavigationBar(navController: NavHostController) {
     var selectedItem by remember { mutableIntStateOf(0) }
 
     NavigationBar {
@@ -84,10 +121,12 @@ fun DoingNavigationBar(navController: NavHostController) {
                     }
                 },
                 icon = {
-                    Icon(
-                        imageVector = if (selected) screen.selectedIcon else screen.unSelectedIcon,
-                        contentDescription = screen.title
-                    )
+                    (if (selected) screen.selectedIcon else screen.unSelectedIcon)?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = screen.title
+                        )
+                    }
                 },
                 label = { Text(text = screen.title) }
             )

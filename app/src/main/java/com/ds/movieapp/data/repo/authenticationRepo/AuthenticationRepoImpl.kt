@@ -1,11 +1,11 @@
-package com.ds.movieapp.data.profileRepo
+package com.ds.movieapp.data.repo.authenticationRepo
 
 import com.ds.movieapp.BuildConfig
-import com.ds.movieapp.data.homeRepo.StoreRepo
 import com.ds.movieapp.data.models.LoginDetails
 import com.ds.movieapp.data.models.LogoutDetails
 import com.ds.movieapp.data.models.RequestToken
 import com.ds.movieapp.data.models.SessionId
+import com.ds.movieapp.data.repo.homeRepo.StoreRepo
 import com.ds.movieapp.di.MovieDBBaseUrl
 import com.ds.movieapp.domain.repo.AuthenticationRepo
 import io.ktor.client.HttpClient

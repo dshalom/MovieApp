@@ -1,21 +1,21 @@
-package com.ds.movieapp.data.homeRepo
+package com.ds.movieapp.data.repo.homeRepo
 
 import com.ds.movieapp.data.models.ConfigurationDto
 import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.data.models.MoviesDto
 import com.ds.movieapp.di.MovieDBBaseUrl
 import com.ds.movieapp.domain.models.Movie
-import com.ds.movieapp.domain.repo.HomeRepo
+import com.ds.movieapp.domain.repo.MoviesRepo
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import javax.inject.Inject
 
-class HomeRepoImpl @Inject constructor(
+class MoviesRepoImpl @Inject constructor(
     private val client: HttpClient,
     private val storeRepo: StoreRepo,
     @MovieDBBaseUrl private val baseUrl: String
-) : HomeRepo {
+) : MoviesRepo {
     override suspend fun getGenres(): Genres {
         return client.get("${baseUrl}genre/movie/list")
             .body<Genres>()

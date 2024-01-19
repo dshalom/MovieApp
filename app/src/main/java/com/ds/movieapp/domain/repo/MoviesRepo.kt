@@ -4,7 +4,7 @@ import com.ds.movieapp.data.models.ConfigurationDto
 import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.domain.models.Movie
 
-interface HomeRepo {
+interface MoviesRepo {
 
     suspend fun getGenres(): Genres
     suspend fun getMoviesByGenre(genreId: String): List<Movie>
