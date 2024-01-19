@@ -9,6 +9,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.1.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.4"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" apply false
+    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
 buildscript {
