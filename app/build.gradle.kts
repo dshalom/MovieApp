@@ -84,9 +84,11 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.49")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth")
 
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("io.ktor:ktor-client-core:$ktor_version")

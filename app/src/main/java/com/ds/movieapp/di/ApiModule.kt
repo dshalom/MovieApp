@@ -1,6 +1,9 @@
 package com.ds.movieapp.di
 
 import com.ds.movieapp.BuildConfig
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +77,10 @@ object ApiModule {
         }
         return client
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
 
     @Provides
     @MovieDBBaseUrl

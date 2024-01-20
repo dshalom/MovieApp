@@ -1,8 +1,11 @@
 package com.ds.movieapp.ui.screens.profile
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ds.movieapp.domain.repo.AuthenticationRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
@@ -46,26 +49,33 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             when (event) {
                 ProfileEvent.OnLoginClick -> {
-                    authenticationRepo.login()
-
-//                    if (requestToken.success) {
-//                        setUiState {
-//                            copy(
-//                                requestToken = requestToken.requestToken
-//                            )
-//                        }
-//                    }
+                    val res = authenticationRepo.login("abc@gmail.com", "123!@edeK")
+                    setUiState {
+                        copy(error = !res)
+                    }
                 }
 
                 ProfileEvent.OnLogOutClick -> {
-                    authenticationRepo.logout()
+                    // authenticationRepo.logout()
+                    val db = Firebase.firestore
+
+                    val user = hashMapOf(
+                        "first" to "Ada",
+                        "last" to "Lovelace",
+                        "born" to 1815
+                    )
+
+// Add a new document with a generated ID
+                    db.collection("users")
+                        .add(user)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("dsds", "DocumentSnapshot added with ID: ${documentReference.id}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("dsds", "Error adding document", e)
+                        }
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        authenticationRepo.onCleared()
     }
 }
