@@ -1,9 +1,11 @@
 package com.ds.movieapp.ui.screens.details
 
+import androidx.lifecycle.viewModelScope
 import com.ds.movieapp.domain.repo.MoviesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -12,7 +14,7 @@ class DetailsViewModel @Inject constructor(
     private val moviesRepo: MoviesRepo
 ) : UdfViewModel<DetailsEvent, DetailsUiState, DetailsAction>(
     initialUiState = DetailsUiState(
-        movies = emptyList(),
+        movieDetails = null,
         error = false
     )
 ) {
@@ -27,6 +29,18 @@ class DetailsViewModel @Inject constructor(
     }
 
     override fun handleEvent(event: DetailsEvent) {
+        when (event) {
+            is DetailsEvent.OnLoad -> {
+                viewModelScope.launch {
+                    val movieDetails = moviesRepo.getMovieById(event.movieId)
+                    setUiState {
+                        copy(movieDetails = movieDetails)
+                    }
+                }
+            }
+
+            DetailsEvent.OnUpButtonClicked -> {}
+        }
     }
 
     override fun onCleared() {

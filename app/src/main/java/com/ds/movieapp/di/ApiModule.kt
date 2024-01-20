@@ -85,5 +85,5 @@ object ApiModule {
     @Provides
     @MovieDBBaseUrl
     @Singleton
-    fun provideBaseUrl(): String = "https://api.themoviedb.org/3/"
+    fun provideBaseUrl(): String = "https://api.themoviedb.org/3"
 }

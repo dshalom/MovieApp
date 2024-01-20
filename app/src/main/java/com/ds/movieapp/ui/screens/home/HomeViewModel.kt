@@ -75,7 +75,6 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.OnFavouriteClicked -> {
-                Timber.i("dsds OnFavouriteClicked ${event.movieId}  ${event.isFavourite}")
             }
         }
     }
