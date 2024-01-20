@@ -55,7 +55,7 @@ fun HomeUi(
                 item {
                     GenreChips(
                         titles = homeUiState.genres,
-                        homeUiState.genres.firstOrNull()?.id ?: 0
+                        homeUiState.selectedGenre
                     ) {
                         event(HomeEvent.OnGenreClicked(it))
                     }
@@ -73,7 +73,6 @@ fun HomeUi(
                             style = MaterialTheme.typography.titleLarge
                         )
                         Button(
-
                             onClick = {
                                 navController.navigate("${Screen.GridScreen.route}/${homeUiState.selectedGenre}")
                             },
