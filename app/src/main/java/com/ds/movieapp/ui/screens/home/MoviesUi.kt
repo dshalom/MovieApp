@@ -15,7 +15,11 @@ import com.ds.movieapp.ui.screens.common.components.MovieUi
 import com.ds.movieapp.ui.theme.MovieAppTheme
 
 @Composable
-fun MoviesUi(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
+fun MoviesUi(
+    movies: List<Movie>,
+    onMovieClicked: (String) -> Unit,
+    onFavouriteClicked: (Int, Boolean) -> Unit
+) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -26,7 +30,9 @@ fun MoviesUi(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
                     onMovieClicked(movie.id.toString())
                 }
             ) {
-                MovieUi(movie)
+                MovieUi(movie) { id, isFavourite ->
+                    onFavouriteClicked(id, isFavourite)
+                }
             }
         }
     }
@@ -48,9 +54,12 @@ fun MoviesPreview() {
                     posterPath = "https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg",
                     releaseDate = "",
                     title = "Aquaman and the Lost Kingdom",
-                    voteAverage = 9.0
+                    voteAverage = 9.0,
+                    isFavourite = false
                 )
-            )
-        ) {}
+            ),
+            onMovieClicked = {},
+            onFavouriteClicked = { _, _ -> }
+        )
     }
 }

@@ -86,9 +86,15 @@ fun HomeUi(
                     }
                 }
                 item {
-                    MoviesUi(movies = homeUiState.movies) {
-                        navController.navigate("${Screen.DetailsScreen.route}/$it")
-                    }
+                    MoviesUi(
+                        movies = homeUiState.movies,
+                        onMovieClicked = { id ->
+                            navController.navigate("${Screen.DetailsScreen.route}/$id")
+                        },
+                        onFavouriteClicked = { id, isFavourite ->
+                            event(HomeEvent.OnFavouriteClicked(id, isFavourite))
+                        }
+                    )
                 }
             }
         }

@@ -34,7 +34,8 @@ class MoviesRepoImpl @Inject constructor(
                     posterPath = "${storeRepo.getBaseUrl()}w500/${it.posterPath}",
                     releaseDate = it.releaseDate,
                     title = it.title,
-                    voteAverage = it.voteAverage
+                    voteAverage = it.voteAverage,
+                    isFavourite = false
                 )
             }
     }

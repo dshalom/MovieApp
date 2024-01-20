@@ -83,7 +83,8 @@ fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
                 }
             ) {
                 Column {
-                    MovieUi(movie)
+                    MovieUi(movie) { id, isFavourite ->
+                    }
                 }
             }
         }

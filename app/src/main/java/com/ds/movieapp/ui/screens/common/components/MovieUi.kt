@@ -22,7 +22,7 @@ import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.Movie
 
 @Composable
-fun MovieUi(movie: Movie) {
+fun MovieUi(movie: Movie, onFavouriteClicked: (Int, Boolean) -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -51,9 +51,18 @@ fun MovieUi(movie: Movie) {
 
             )
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                onFavouriteClicked(
+                    movie.id,
+                    !movie.isFavourite
+                )
+            }, modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
-                    text = "ddd",
+                    text = if (movie.isFavourite) {
+                        "Remove favourite"
+                    } else {
+                        "Add to favourites"
+                    },
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
