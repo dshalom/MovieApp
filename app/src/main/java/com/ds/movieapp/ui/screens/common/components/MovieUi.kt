@@ -1,7 +1,11 @@
 package com.ds.movieapp.ui.screens.common.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -21,15 +26,12 @@ fun MovieUi(movie: Movie) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        ),
-        modifier = Modifier
-
+        )
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(width = 200.dp, height = 340.dp)
-
+                .width(width = 200.dp)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -41,9 +43,22 @@ fun MovieUi(movie: Movie) {
             )
             Text(
                 text = movie.title,
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
+                modifier = Modifier.padding(vertical = 8.dp),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+
             )
+
+            Button(onClick = { /*TODO*/ }) {
+                Text(
+                    text = "ddd",
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

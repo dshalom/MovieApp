@@ -1,6 +1,7 @@
 package com.ds.movieapp.ui.screens.grid
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +71,10 @@ fun GridUi(
 
 @Composable
 fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(movies) { movie ->
 
             Box(
@@ -78,7 +82,9 @@ fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
                     onMovieClicked(movie.id.toString())
                 }
             ) {
-                MovieUi(movie)
+                Column {
+                    MovieUi(movie)
+                }
             }
         }
     }
