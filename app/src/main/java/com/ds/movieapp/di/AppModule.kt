@@ -37,7 +37,7 @@ abstract class AppModule {
 
     @Binds
     @Singleton
-    abstract fun bindsSessionRepo(
+    abstract fun bindsWatchListFavoritesRepo(
         sessionRepo: WatchListFavoritesRepoImpl
     ): WatchListFavoritesRepo
 }

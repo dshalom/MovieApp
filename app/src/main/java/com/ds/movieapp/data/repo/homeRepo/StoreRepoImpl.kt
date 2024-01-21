@@ -33,7 +33,6 @@ class StoreRepoImpl @Inject constructor(@ApplicationContext val context: Context
 
     companion object {
         private const val SETTINGS = "settings"
-        private const val SESSION_KEY = "sessionKey"
         private const val BASE_URL_KEY = "baseUrlKey"
     }
 }

@@ -16,7 +16,7 @@ class AuthenticationRepoImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : AuthenticationRepo {
 
-    val cs = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
     override suspend fun login(email: String, password: String): Boolean {
         return auth.createUserWithEmailAndPassword(email, password)
             .await().user != null
@@ -36,6 +36,6 @@ class AuthenticationRepoImpl @Inject constructor(
             awaitClose {
                 auth.removeAuthStateListener(authStateListener)
             }
-        }.stateIn(cs, SharingStarted.WhileSubscribed(), auth.currentUser != null)
+        }.stateIn(coroutineScope, SharingStarted.WhileSubscribed(), auth.currentUser != null)
     }
 }
