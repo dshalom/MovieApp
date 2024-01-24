@@ -46,15 +46,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             when (event) {
                 ProfileEvent.OnLoginClick -> {
-                    authenticationRepo.login()
-
-//                    if (requestToken.success) {
-//                        setUiState {
-//                            copy(
-//                                requestToken = requestToken.requestToken
-//                            )
-//                        }
-//                    }
+                    val res = authenticationRepo.login("abc@gmail.com", "123!@edeK")
+                    setUiState {
+                        copy(error = !res)
+                    }
                 }
 
                 ProfileEvent.OnLogOutClick -> {
@@ -62,10 +57,5 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        authenticationRepo.onCleared()
     }
 }
