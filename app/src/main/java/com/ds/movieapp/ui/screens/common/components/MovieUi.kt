@@ -51,19 +51,22 @@ fun MovieUi(movie: Movie, onFavouriteClicked: (String, Boolean) -> Unit) {
 
             )
 
-            Button(onClick = {
-                onFavouriteClicked(
-                    movie.id,
-                    !movie.isFavourite
-                )
-            }, modifier = Modifier.padding(horizontal = 16.dp)) {
+            Button(
+                onClick = {
+                    onFavouriteClicked(
+                        movie.id,
+                        !movie.isFavourite
+                    )
+                },
+                shape = MaterialTheme.shapes.medium
+            ) {
                 Text(
                     text = if (movie.isFavourite) {
                         "Remove favourite"
                     } else {
                         "Add to favourites"
                     },
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center
                 )
             }

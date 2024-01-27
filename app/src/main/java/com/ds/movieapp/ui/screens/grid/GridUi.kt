@@ -1,10 +1,10 @@
 package com.ds.movieapp.ui.screens.grid
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -59,7 +59,7 @@ fun GridUi(
                 .padding(paddingValues)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 MoviesGrid(gridUiState.movies) { movieId ->
                     navController.navigate("${Screen.DetailsScreen.route}/$movieId")
@@ -72,8 +72,8 @@ fun GridUi(
 @Composable
 fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        columns = GridCells.Fixed(2)
+        //  verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movies) { movie ->
 
