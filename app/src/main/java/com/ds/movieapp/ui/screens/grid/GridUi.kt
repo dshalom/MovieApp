@@ -61,19 +61,28 @@ fun GridUi(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MoviesGrid(gridUiState.movies) { movieId ->
-                    navController.navigate("${Screen.DetailsScreen.route}/$movieId")
-                }
+                MoviesGrid(
+                    gridUiState.movies,
+                    onMovieClicked = { movieId ->
+                        navController.navigate("${Screen.DetailsScreen.route}/$movieId")
+                    },
+                    onFavouriteClicked = { id, isFavorite ->
+                        event(GridEvent.OnFavouriteClicked(id, isFavorite))
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
+fun MoviesGrid(
+    movies: List<Movie>,
+    onMovieClicked: (String) -> Unit,
+    onFavouriteClicked: (String, Boolean) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2)
-        //  verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movies) { movie ->
 
@@ -84,6 +93,7 @@ fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
             ) {
                 Column {
                     MovieUi(movie) { id, isFavourite ->
+                        onFavouriteClicked(id, isFavourite)
                     }
                 }
             }

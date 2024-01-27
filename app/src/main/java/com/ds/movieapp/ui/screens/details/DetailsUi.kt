@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
@@ -84,6 +85,28 @@ fun DetailsUi(
                     overflow = TextOverflow.Ellipsis
 
                 )
+
+                Button(
+                    onClick = {
+                        event(
+                            DetailsEvent.OnFavouriteClicked(
+                                movieId,
+                                !(detailsUiState.movieDetails?.isFavourite ?: false)
+                            )
+                        )
+                    },
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        text = if (detailsUiState.movieDetails?.isFavourite == true) {
+                            "Remove favourite"
+                        } else {
+                            "Add to favourites"
+                        },
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

@@ -4,14 +4,17 @@ import com.ds.movieapp.data.models.ConfigurationDto
 import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.domain.models.Movie
 import com.ds.movieapp.domain.models.MovieDetails
+import kotlinx.coroutines.flow.Flow
 
 interface MoviesRepo {
 
     suspend fun getGenres(): Genres
-    suspend fun getMoviesByGenre(genreId: String): List<Movie>
+    suspend fun getMoviesByGenre(genreId: String): Flow<List<Movie>>
 
-    suspend fun getMovieById(id: String): MovieDetails
+    suspend fun getMovieById(id: String): Flow<MovieDetails>
 
     suspend fun getConfiguration(): ConfigurationDto
+    fun addToFavorites(movieId: String)
+    fun removeFromFavorites(movieId: String)
     fun onCleared()
 }
