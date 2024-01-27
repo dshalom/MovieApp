@@ -7,7 +7,6 @@ import com.ds.movieapp.domain.repo.WatchListFavoritesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,8 +38,6 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch(exceptionHandler) {
 
-            watchListFavoritesRepo.observeFavorites()
-
             val config = moviesRepo.getConfiguration()
             storeRepo.setBaseUrl(config.images.baseUrl)
 
@@ -52,6 +49,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
             val movies = moviesRepo.getMoviesByGenre(genres.genres.first().id.toString())
+
             setUiState {
                 copy(
                     movies = movies.take(5)
@@ -61,7 +59,19 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             watchListFavoritesRepo.observeFavorites().collect { favourites ->
-                Timber.i("dsds flow $favourites")
+                setUiState {
+                    copy(
+                        movies = movies.map { movie ->
+                            movie.copy(
+                                isFavourite = (
+                                    favourites?.count {
+                                        it.movieId == movie.id.toString()
+                                    } ?: 0
+                                    ) > 0
+                            )
+                        }
+                    )
+                }
             }
         }
     }
