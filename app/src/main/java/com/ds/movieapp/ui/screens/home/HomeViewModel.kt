@@ -7,6 +7,9 @@ import com.ds.movieapp.domain.repo.WatchListFavoritesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,31 +51,8 @@ class HomeViewModel @Inject constructor(
                     selectedGenre = genres.genres.first().id
                 )
             }
-            val movies = moviesRepo.getMoviesByGenre(genres.genres.first().id.toString())
 
-            setUiState {
-                copy(
-                    movies = movies.take(5)
-                )
-            }
-        }
-
-        viewModelScope.launch {
-            watchListFavoritesRepo.observeFavorites().collect { favourites ->
-                setUiState {
-                    copy(
-                        movies = movies.map { movie ->
-                            movie.copy(
-                                isFavourite = (
-                                    favourites?.count {
-                                        it.movieId == movie.id.toString()
-                                    } ?: 0
-                                    ) > 0
-                            )
-                        }
-                    )
-                }
-            }
+            setMoviesByGenre(genres.genres.first().id.toString())
         }
     }
 
@@ -84,11 +64,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 viewModelScope.launch {
-                    val movies = moviesRepo.getMoviesByGenre(event.genreId.toString())
-
-                    setUiState {
-                        copy(movies = movies.take(5), selectedGenre = event.genreId)
-                    }
+                    setMoviesByGenre(event.genreId.toString())
                 }
             }
 
@@ -99,6 +75,28 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun setMoviesByGenre(genre: String) {
+        val movies = moviesRepo.getMoviesByGenre(genre)
+
+        flowOf(movies).combine(
+            watchListFavoritesRepo.observeFavorites()
+        ) { mv, fv ->
+            setUiState {
+                copy(
+                    movies = mv.map { m ->
+                        m.copy(
+                            isFavourite = (
+                                fv?.count { f ->
+                                    f.movieId == m.id.toString()
+                                } ?: 0
+                                ) > 0
+                        )
+                    }.take(5)
+                )
+            }
+        }.collect()
     }
 
     override fun onCleared() {
