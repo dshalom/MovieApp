@@ -7,6 +7,7 @@ import com.ds.movieapp.domain.repo.WatchListFavoritesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
@@ -20,7 +21,6 @@ class HomeViewModel @Inject constructor(
     private val storeRepo: StoreRepo,
     private val watchListFavoritesRepo: WatchListFavoritesRepo
 ) :
-
     UdfViewModel<HomeEvent, HomeUiState, HomeAction>(
         initialUiState = HomeUiState(
             genres = emptyList(),
@@ -28,6 +28,8 @@ class HomeViewModel @Inject constructor(
             error = false
         )
     ) {
+
+    private var job: Job? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.i("CoroutineExceptionHandler $throwable")
@@ -39,7 +41,7 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch(exceptionHandler) {
+        job = viewModelScope.launch(exceptionHandler) {
 
             val config = moviesRepo.getConfiguration()
             storeRepo.setBaseUrl(config.images.baseUrl)
@@ -63,7 +65,8 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.OnGenreClicked -> {
-                viewModelScope.launch {
+                job?.cancel()
+                job = viewModelScope.launch {
                     setMoviesByGenre(event.genreId)
                 }
             }
@@ -91,12 +94,12 @@ class HomeViewModel @Inject constructor(
                     movies = mv.map { m ->
                         m.copy(
                             isFavourite = (
-                                    fv?.count { f ->
-                                        f.movieId == m.id
-                                    } ?: 0
-                                    ) > 0
+                                fv?.count { f ->
+                                    f.movieId == m.id
+                                } ?: 0
+                                ) > 0
                         )
-                    }.take(5)
+                    }.take(MOVIES_TO_SHOW)
                 )
             }
         }.collect()
@@ -105,5 +108,9 @@ class HomeViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         moviesRepo.onCleared()
+    }
+
+    companion object {
+        private const val MOVIES_TO_SHOW = 5
     }
 }

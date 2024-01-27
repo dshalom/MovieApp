@@ -41,7 +41,7 @@ class GridViewModel @Inject constructor(
                 if (uiState.value.movies.isEmpty() || event.genreId != genreId) {
                     job?.cancel()
                     genreId = event.genreId
-                    job = viewModelScope.launch {
+                    job = viewModelScope.launch(exceptionHandler) {
                         val movies = moviesRepo.getMoviesByGenre(event.genreId)
                         setUiState {
                             copy(movies = movies)

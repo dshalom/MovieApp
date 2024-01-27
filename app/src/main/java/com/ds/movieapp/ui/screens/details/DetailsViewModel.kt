@@ -31,7 +31,7 @@ class DetailsViewModel @Inject constructor(
     override fun handleEvent(event: DetailsEvent) {
         when (event) {
             is DetailsEvent.OnLoad -> {
-                viewModelScope.launch {
+                viewModelScope.launch(exceptionHandler) {
                     val movieDetails = moviesRepo.getMovieById(event.movieId)
                     setUiState {
                         copy(movieDetails = movieDetails)
@@ -41,9 +41,5 @@ class DetailsViewModel @Inject constructor(
 
             DetailsEvent.OnUpButtonClicked -> {}
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }
