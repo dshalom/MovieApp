@@ -18,7 +18,7 @@ import com.ds.movieapp.ui.theme.MovieAppTheme
 fun MoviesUi(
     movies: List<Movie>,
     onMovieClicked: (String) -> Unit,
-    onFavouriteClicked: (Int, Boolean) -> Unit
+    onFavouriteClicked: (String, Boolean) -> Unit
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -27,7 +27,7 @@ fun MoviesUi(
         items(movies) { movie ->
             Box(
                 modifier = Modifier.clickable {
-                    onMovieClicked(movie.id.toString())
+                    onMovieClicked(movie.id)
                 }
             ) {
                 MovieUi(movie) { id, isFavourite ->
@@ -48,7 +48,7 @@ fun MoviesPreview() {
                     adult = false,
                     backdropPath = "",
                     genreIds = emptyList(),
-                    id = 0,
+                    id = "0",
                     overview = "",
                     popularity = 3.0,
                     posterPath = "https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg",

@@ -25,7 +25,9 @@ abstract class UdfViewModel<E : Event, S : UiState, A : Action>(val initialUiSta
     abstract fun handleEvent(event: E)
 
     protected fun setUiState(reduce: S.() -> S) {
-        _uiState.update { _uiState.value.reduce() }
+        _uiState.update {
+            _uiState.value.reduce()
+        }
     }
 
     protected fun sendAction(builder: () -> A) {

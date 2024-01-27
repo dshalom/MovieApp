@@ -79,7 +79,7 @@ fun MoviesGrid(movies: List<Movie>, onMovieClicked: (String) -> Unit) {
 
             Box(
                 modifier = Modifier.clickable {
-                    onMovieClicked(movie.id.toString())
+                    onMovieClicked(movie.id)
                 }
             ) {
                 Column {

@@ -22,7 +22,7 @@ import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.Movie
 
 @Composable
-fun MovieUi(movie: Movie, onFavouriteClicked: (Int, Boolean) -> Unit) {
+fun MovieUi(movie: Movie, onFavouriteClicked: (String, Boolean) -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
