@@ -9,7 +9,7 @@ data class MovieDetailsDto(
     val backdropPath: String?,
     val genres: List<Genre>,
     val homepage: String,
-    val id: Int,
+    val id: String,
     @SerialName("imdb_id")
     val imdbId: String,
     val overview: String,

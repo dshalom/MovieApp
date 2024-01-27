@@ -9,8 +9,8 @@ data class MovieDto(
     @SerialName("backdrop_path")
     val backdropPath: String?,
     @SerialName("genre_ids")
-    val genreIds: List<Int>,
-    val id: Int,
+    val genreIds: List<String>,
+    val id: String,
     val overview: String,
     val popularity: Double,
     @SerialName("poster_path")

@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            setMoviesByGenre(genres.genres.first().id.toString())
+            setMoviesByGenre(genres.genres.first().id)
         }
     }
 
@@ -64,7 +64,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 viewModelScope.launch {
-                    setMoviesByGenre(event.genreId.toString())
+                    setMoviesByGenre(event.genreId)
                 }
             }
 
@@ -80,6 +80,9 @@ class HomeViewModel @Inject constructor(
     private suspend fun setMoviesByGenre(genre: String) {
         val movies = moviesRepo.getMoviesByGenre(genre)
 
+        setUiState {
+            copy(selectedGenre = genre)
+        }
         flowOf(movies).combine(
             watchListFavoritesRepo.observeFavorites()
         ) { mv, fv ->
@@ -88,10 +91,10 @@ class HomeViewModel @Inject constructor(
                     movies = mv.map { m ->
                         m.copy(
                             isFavourite = (
-                                fv?.count { f ->
-                                    f.movieId == m.id.toString()
-                                } ?: 0
-                                ) > 0
+                                    fv?.count { f ->
+                                        f.movieId == m.id
+                                    } ?: 0
+                                    ) > 0
                         )
                     }.take(5)
                 )

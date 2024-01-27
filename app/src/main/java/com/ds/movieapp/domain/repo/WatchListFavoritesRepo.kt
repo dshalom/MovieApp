@@ -6,7 +6,7 @@ data class MovieFavourite(val movieId: String)
 
 interface WatchListFavoritesRepo {
 
-    fun addToFavorites(movieId: Int)
-    fun removeFromFavorites(movieId: Int)
+    fun addToFavorites(movieId: String)
+    fun removeFromFavorites(movieId: String)
     fun observeFavorites(): Flow<List<MovieFavourite>?>
 }

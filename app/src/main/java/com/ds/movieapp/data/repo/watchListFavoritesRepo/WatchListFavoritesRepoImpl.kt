@@ -20,12 +20,12 @@ class WatchListFavoritesRepoImpl @Inject constructor(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    override fun addToFavorites(movieId: Int) {
+    override fun addToFavorites(movieId: String) {
         db.collection("favourites")
-            .add(MovieFavourite(movieId.toString()))
+            .add(MovieFavourite(movieId))
     }
 
-    override fun removeFromFavorites(movieId: Int) {
+    override fun removeFromFavorites(movieId: String) {
         db.collection("favourites")
             .whereEqualTo("movieId", movieId)
             .addSnapshotListener { result, _ ->
