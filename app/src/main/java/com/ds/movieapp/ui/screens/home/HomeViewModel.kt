@@ -3,14 +3,11 @@ package com.ds.movieapp.ui.screens.home
 import androidx.lifecycle.viewModelScope
 import com.ds.movieapp.data.repo.homeRepo.StoreRepo
 import com.ds.movieapp.domain.repo.MoviesRepo
-import com.ds.movieapp.domain.repo.WatchListFavoritesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,8 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val moviesRepo: MoviesRepo,
-    private val storeRepo: StoreRepo,
-    private val watchListFavoritesRepo: WatchListFavoritesRepo
+    private val storeRepo: StoreRepo
 ) :
     UdfViewModel<HomeEvent, HomeUiState, HomeAction>(
         initialUiState = HomeUiState(
@@ -54,7 +50,13 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            setMoviesByGenre(genres.genres.first().id)
+            moviesRepo.getMoviesByGenre(genres.genres.first().id)
+                .take(MOVIES_TO_SHOW)
+                .collect {
+                    setUiState {
+                        copy(movies = it)
+                    }
+                }
         }
     }
 
@@ -65,44 +67,28 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.OnGenreClicked -> {
+                setUiState {
+                    copy(selectedGenre = event.genreId)
+                }
                 job?.cancel()
                 job = viewModelScope.launch {
-                    setMoviesByGenre(event.genreId)
+                    moviesRepo.getMoviesByGenre(event.genreId)
+                        .take(MOVIES_TO_SHOW)
+                        .collect {
+                            setUiState {
+                                copy(movies = it)
+                            }
+                        }
                 }
             }
 
             is HomeEvent.OnFavouriteClicked -> {
                 when (event.isFavourite) {
-                    true -> watchListFavoritesRepo.addToFavorites(event.movieId)
-                    false -> watchListFavoritesRepo.removeFromFavorites(event.movieId)
+                    true -> moviesRepo.addToFavorites(event.movieId)
+                    false -> moviesRepo.removeFromFavorites(event.movieId)
                 }
             }
         }
-    }
-
-    private suspend fun setMoviesByGenre(genre: String) {
-        val movies = moviesRepo.getMoviesByGenre(genre)
-
-        setUiState {
-            copy(selectedGenre = genre)
-        }
-        flowOf(movies).combine(
-            watchListFavoritesRepo.observeFavorites()
-        ) { mv, fv ->
-            setUiState {
-                copy(
-                    movies = mv.map { m ->
-                        m.copy(
-                            isFavourite = (
-                                fv?.count { f ->
-                                    f.movieId == m.id
-                                } ?: 0
-                                ) > 0
-                        )
-                    }.take(MOVIES_TO_SHOW)
-                )
-            }
-        }.collect()
     }
 
     override fun onCleared() {

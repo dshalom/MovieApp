@@ -42,11 +42,20 @@ class GridViewModel @Inject constructor(
                     job?.cancel()
                     genreId = event.genreId
                     job = viewModelScope.launch(exceptionHandler) {
-                        val movies = moviesRepo.getMoviesByGenre(event.genreId)
-                        setUiState {
-                            copy(movies = movies)
-                        }
+                        moviesRepo.getMoviesByGenre(event.genreId)
+                            .collect {
+                                setUiState {
+                                    copy(movies = it)
+                                }
+                            }
                     }
+                }
+            }
+
+            is GridEvent.OnFavouriteClicked -> {
+                when (event.isFavourite) {
+                    true -> moviesRepo.addToFavorites(event.movieId)
+                    false -> moviesRepo.removeFromFavorites(event.movieId)
                 }
             }
         }

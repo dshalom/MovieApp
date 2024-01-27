@@ -78,7 +78,7 @@ fun HomeUi(
                         ) {
                             Text(
                                 text = "See all",
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
