@@ -1,14 +1,10 @@
 package com.ds.movieapp.ui.screens.grid
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -23,9 +19,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.ds.movieapp.domain.models.Movie
 import com.ds.movieapp.ui.screens.Screen
-import com.ds.movieapp.ui.screens.common.components.MovieUi
+import com.ds.movieapp.ui.screens.common.components.MoviesGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,32 +65,6 @@ fun GridUi(
                         event(GridEvent.OnFavouriteClicked(id, isFavorite))
                     }
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun MoviesGrid(
-    movies: List<Movie>,
-    onMovieClicked: (String) -> Unit,
-    onFavouriteClicked: (String, Boolean) -> Unit
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2)
-    ) {
-        items(movies) { movie ->
-
-            Box(
-                modifier = Modifier.clickable {
-                    onMovieClicked(movie.id)
-                }
-            ) {
-                Column {
-                    MovieUi(movie) { id, isFavourite ->
-                        onFavouriteClicked(id, isFavourite)
-                    }
-                }
             }
         }
     }
