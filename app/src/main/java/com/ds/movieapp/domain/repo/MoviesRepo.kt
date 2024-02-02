@@ -10,7 +10,7 @@ interface MoviesRepo {
 
     suspend fun getGenres(): Genres
     suspend fun getMoviesByGenre(genreId: String): Flow<List<Movie>>
-
+    suspend fun searchMovies(query: String): List<Movie>
     suspend fun getMovieById(id: String): Flow<MovieDetails>
 
     suspend fun getConfiguration(): ConfigurationDto

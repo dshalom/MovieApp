@@ -47,7 +47,6 @@ class MoviesRepoImpl @Inject constructor(
                     )
                 }
         ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
-
             mv.map { m ->
                 m.copy(
                     isFavourite = (
@@ -58,6 +57,25 @@ class MoviesRepoImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun searchMovies(query: String): List<Movie> {
+        return client.get("$baseUrl/search/movie?query=$query")
+            .body<MoviesDto>().results.map {
+                Movie(
+                    adult = it.adult,
+                    backdropPath = it.backdropPath ?: "",
+                    genreIds = it.genreIds,
+                    id = it.id,
+                    overview = it.overview,
+                    popularity = it.popularity,
+                    posterPath = "${storeRepo.getBaseUrl()}w500/${it.posterPath}",
+                    releaseDate = it.releaseDate,
+                    title = it.title,
+                    voteAverage = it.voteAverage,
+                    isFavourite = false
+                )
+            }
     }
 
     override suspend fun getMovieById(id: String): Flow<MovieDetails> {
