@@ -2,7 +2,7 @@ package com.ds.movieapp.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ds.movieapp.domain.models.Movie
+import com.ds.movieapp.domain.models.SearchResult
 import com.ds.movieapp.domain.repo.MoviesRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ class SearchViewModel @Inject constructor(
     private val moviesRepo: MoviesRepo
 ) : ViewModel() {
 
-    private val _movies: MutableStateFlow<List<Movie>> = MutableStateFlow(emptyList())
+    private val _movies: MutableStateFlow<List<SearchResult>> = MutableStateFlow(emptyList())
     val movies = _movies.asStateFlow()
 
     fun onSearchTextChanged(searchText: String) {
