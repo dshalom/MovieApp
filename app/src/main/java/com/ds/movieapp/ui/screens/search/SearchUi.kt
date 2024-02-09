@@ -38,6 +38,9 @@ import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.SearchResult
 import com.ds.movieapp.ui.screens.Screen
 
+private const val IMAGE_WIDTH = 16f
+private const val IMAGE_HEIGHT = 9f
+
 @Composable
 fun SearchUi(
     navController: NavController,
@@ -59,10 +62,12 @@ fun SearchUi(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DoingSearch(searchViewModel: SearchViewModel, onSearchItemClicked: (id: String) -> Unit) {
+private fun DoingSearch(
+    searchViewModel: SearchViewModel,
+    onSearchItemClicked: (id: String) -> Unit
+) {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-
     val movies by searchViewModel.movies.collectAsState()
 
     SearchBar(
@@ -107,7 +112,8 @@ fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> 
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(8.dp)
             .clickable {
                 onSearchItemClicked(searchResult.id)
@@ -125,7 +131,7 @@ fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> 
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
-                modifier = Modifier.aspectRatio(16f / 9f)
+                modifier = Modifier.aspectRatio(IMAGE_WIDTH / IMAGE_HEIGHT)
 
             )
             Text(
