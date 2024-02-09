@@ -7,6 +7,7 @@ import com.ds.movieapp.data.models.MoviesDto
 import com.ds.movieapp.di.MovieDBBaseUrl
 import com.ds.movieapp.domain.models.Movie
 import com.ds.movieapp.domain.models.MovieDetails
+import com.ds.movieapp.domain.models.SearchResult
 import com.ds.movieapp.domain.repo.MoviesRepo
 import com.ds.movieapp.domain.repo.WatchListFavoritesRepo
 import io.ktor.client.HttpClient
@@ -47,7 +48,6 @@ class MoviesRepoImpl @Inject constructor(
                     )
                 }
         ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
-
             mv.map { m ->
                 m.copy(
                     isFavourite = (
@@ -58,6 +58,17 @@ class MoviesRepoImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun searchMovies(query: String): List<SearchResult> {
+        return client.get("$baseUrl/search/movie?query=$query")
+            .body<MoviesDto>().results.map {
+                SearchResult(
+                    backdropPath = "${storeRepo.getBaseUrl()}w780/${it.backdropPath}",
+                    id = it.id,
+                    title = it.title
+                )
+            }
     }
 
     override suspend fun getMovieById(id: String): Flow<MovieDetails> {
