@@ -1,9 +1,10 @@
 package com.ds.movieapp.ui.screens.search
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,12 +53,7 @@ fun SearchUi(
 
     ) { paddingValues ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-        }
+        Box(modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -91,7 +87,9 @@ private fun DoingSearch(searchViewModel: SearchViewModel, onSearchItemClicked: (
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(movies) { movie ->
 
@@ -109,12 +107,16 @@ fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> 
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
-        modifier = Modifier.clickable {
-            onSearchItemClicked(searchResult.id)
-        }
+        modifier = Modifier.fillMaxWidth()
+            .padding(8.dp)
+            .clickable {
+                onSearchItemClicked(searchResult.id)
+            }
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
 
         ) {
             AsyncImage(
@@ -122,7 +124,8 @@ fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> 
                     .data(searchResult.backdropPath)
                     .crossfade(true)
                     .build(),
-                contentDescription = null
+                contentDescription = null,
+                modifier = Modifier.aspectRatio(16f / 9f)
 
             )
             Text(
