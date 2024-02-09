@@ -1,8 +1,10 @@
 package com.ds.movieapp.ui.screens.search
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,37 +32,42 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.SearchResult
+import com.ds.movieapp.ui.screens.Screen
+
+private const val IMAGE_WIDTH = 16f
+private const val IMAGE_HEIGHT = 9f
 
 @Composable
 fun SearchUi(
+    navController: NavController,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
-            DoingSearch(searchViewModel)
+            DoingSearch(searchViewModel) {
+                navController.navigate("${Screen.DetailsScreen.route}/$it")
+            }
         }
 
     ) { paddingValues ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-        }
+        Box(modifier = Modifier.padding(paddingValues))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DoingSearch(searchViewModel: SearchViewModel) {
+private fun DoingSearch(
+    searchViewModel: SearchViewModel,
+    onSearchItemClicked: (id: String) -> Unit
+) {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-
     val movies by searchViewModel.movies.collectAsState()
 
     SearchBar(
@@ -85,25 +92,37 @@ private fun DoingSearch(searchViewModel: SearchViewModel) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(movies) { movie ->
 
-                SearchItem(movie)
+                SearchItem(movie) { movieId ->
+                    onSearchItemClicked(movieId)
+                }
             }
         }
     }
 }
 
 @Composable
-fun SearchItem(searchResult: SearchResult) {
+fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        )
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable {
+                onSearchItemClicked(searchResult.id)
+            }
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
 
         ) {
             AsyncImage(
@@ -111,7 +130,8 @@ fun SearchItem(searchResult: SearchResult) {
                     .data(searchResult.backdropPath)
                     .crossfade(true)
                     .build(),
-                contentDescription = null
+                contentDescription = null,
+                modifier = Modifier.aspectRatio(IMAGE_WIDTH / IMAGE_HEIGHT)
 
             )
             Text(
