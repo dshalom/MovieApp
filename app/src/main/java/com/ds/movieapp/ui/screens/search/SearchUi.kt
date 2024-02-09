@@ -1,5 +1,6 @@
 package com.ds.movieapp.ui.screens.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,18 +31,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ds.movieapp.domain.models.SearchResult
+import com.ds.movieapp.ui.screens.Screen
 
 @Composable
 fun SearchUi(
+    navController: NavController,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     Scaffold(
         modifier = Modifier.padding(horizontal = 8.dp),
         topBar = {
-            DoingSearch(searchViewModel)
+            DoingSearch(searchViewModel) {
+                navController.navigate("${Screen.DetailsScreen.route}/$it")
+            }
         }
 
     ) { paddingValues ->
@@ -57,7 +63,7 @@ fun SearchUi(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DoingSearch(searchViewModel: SearchViewModel) {
+private fun DoingSearch(searchViewModel: SearchViewModel, onSearchItemClicked: (id: String) -> Unit) {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
@@ -89,18 +95,23 @@ private fun DoingSearch(searchViewModel: SearchViewModel) {
         ) {
             items(movies) { movie ->
 
-                SearchItem(movie)
+                SearchItem(movie) { movieId ->
+                    onSearchItemClicked(movieId)
+                }
             }
         }
     }
 }
 
 @Composable
-fun SearchItem(searchResult: SearchResult) {
+fun SearchItem(searchResult: SearchResult, onSearchItemClicked: (id: String) -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        )
+        ),
+        modifier = Modifier.clickable {
+            onSearchItemClicked(searchResult.id)
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

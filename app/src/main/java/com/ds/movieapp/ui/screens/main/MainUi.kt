@@ -95,7 +95,7 @@ fun MainUi(
                     event = detailsViewModel::handleEvent
                 )
             }
-            composable(Screen.SearchScreen.route) { SearchUi() }
+            composable(Screen.SearchScreen.route) { SearchUi(navController) }
         }
     }
 }
