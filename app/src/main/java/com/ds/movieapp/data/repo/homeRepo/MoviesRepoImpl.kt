@@ -79,10 +79,13 @@ class MoviesRepoImpl @Inject constructor(
             MovieDetails(
                 id = dto.id,
                 title = dto.title,
-                backdropPath = "${storeRepo.getBaseUrl()}w1280/${dto.backdropPath}"
+                backdropPath = "${storeRepo.getBaseUrl()}w1280/${dto.backdropPath}",
+                tagline = dto.tagline,
+                overview = dto.overview,
+                genres = dto.genres.map { it.name },
+                voteAverage = dto.voteAverage.toFloat()
             )
         ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
-
             mv.copy(
                 isFavourite = (
                     fv?.count { f ->

@@ -1,6 +1,7 @@
 package com.ds.movieapp.ui.screens.details
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,15 +20,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ds.movieapp.R
+import com.ds.movieapp.domain.models.MovieDetails
+import com.ds.movieapp.ui.screens.common.components.GenreChips
+import com.ds.movieapp.ui.theme.MovieAppTheme
+
+private const val IMAGE_WIDTH = 16f
+private const val IMAGE_HEIGHT = 9f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +67,7 @@ fun DetailsUi(
             })
     }) { paddingValues ->
         ElevatedCard(
+            shape = RectangleShape,
             modifier = Modifier.padding(paddingValues),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
@@ -64,7 +75,7 @@ fun DetailsUi(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -72,18 +83,61 @@ fun DetailsUi(
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(R.drawable.placeholder),
-
-                    contentDescription = null
-
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(IMAGE_WIDTH / IMAGE_HEIGHT)
                 )
-                Text(
-                    text = detailsUiState.movieDetails?.title ?: "",
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
 
+                val storesList: String? = ""
+
+                storesList?.takeIf { it.isNotEmpty() }?.apply {
+                    // Provides you list if not empty
+                }
+
+                detailsUiState.movieDetails?.title?.takeIf { it.isNotEmpty() }?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                detailsUiState.movieDetails?.tagline?.takeIf { it.isNotEmpty() }?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                detailsUiState.movieDetails?.overview.toString().let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                detailsUiState.movieDetails?.voteAverage.toString().let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                GenreChips(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    titles = detailsUiState.movieDetails?.genres ?: emptyList()
                 )
 
                 Button(
@@ -108,6 +162,34 @@ fun DetailsUi(
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview(
+    device = "id:pixel_5",
+    showBackground = true
+)
+@Composable
+fun DetailsUiPreview() {
+    MovieAppTheme {
+        DetailsUi(
+            movieId = "",
+            detailsUiState = DetailsUiState(
+                movieDetails = MovieDetails(
+                    id = "",
+                    title = "Badland Hunters",
+                    tagline = "One last hunt to save us all.",
+                    voteAverage = 6.5f,
+                    overview = "After a deadly earthquake turns Seoul into a lawless badland, a fearless huntsman springs into action to rescue a teenager abducted by a mad doctor.",
+                    genres = listOf("Action", "Science Fiction", "Drama"),
+                    backdropPath = "https://picsum.photos/300/300",
+                    isFavourite = true
+                ),
+                error = false
+            ),
+            rememberNavController()
+        ) {
         }
     }
 }
