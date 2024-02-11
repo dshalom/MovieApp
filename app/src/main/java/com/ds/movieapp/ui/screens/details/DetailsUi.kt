@@ -1,11 +1,17 @@
 package com.ds.movieapp.ui.screens.details
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -18,8 +24,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -75,7 +86,9 @@ fun DetailsUi(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -94,34 +107,60 @@ fun DetailsUi(
                     // Provides you list if not empty
                 }
 
-                detailsUiState.movieDetails?.title?.takeIf { it.isNotEmpty() }?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                var isExpanded by remember {
+                    mutableStateOf(false)
                 }
-                detailsUiState.movieDetails?.tagline?.takeIf { it.isNotEmpty() }?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        style = MaterialTheme.typography.titleSmall,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                val transition = updateTransition(targetState = isExpanded, label = "expanded")
+                val iconRotation by transition.animateFloat(label = "iconRotation") { isExpanded ->
+                    if (isExpanded) 180f else 0f
                 }
 
-                detailsUiState.movieDetails?.overview.toString().let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        style = MaterialTheme.typography.titleSmall,
-                        textAlign = TextAlign.Center
-                    )
+                detailsUiState.movieDetails?.title?.takeIf { it.isNotEmpty() }?.let {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                isExpanded = !isExpanded
+                            }
+                    ) {
+                        Text(
+                            text = it,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "",
+                            modifier = Modifier.align(Alignment.TopEnd)
+                                .rotate(iconRotation)
+                        )
+                    }
+                    detailsUiState.movieDetails.tagline.takeIf { it.isNotEmpty() }?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    detailsUiState.movieDetails.overview.let {
+                        AnimatedVisibility(visible = isExpanded) {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.titleSmall,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
                 }
 
                 detailsUiState.movieDetails?.voteAverage.toString().let {
