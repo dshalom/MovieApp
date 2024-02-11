@@ -1,10 +1,12 @@
 package com.ds.movieapp.data.repo.homeRepo
 
+import com.ds.movieapp.data.models.CastDto
 import com.ds.movieapp.data.models.ConfigurationDto
 import com.ds.movieapp.data.models.Genres
 import com.ds.movieapp.data.models.MovieDetailsDto
 import com.ds.movieapp.data.models.MoviesDto
 import com.ds.movieapp.di.MovieDBBaseUrl
+import com.ds.movieapp.domain.models.CastItem
 import com.ds.movieapp.domain.models.Movie
 import com.ds.movieapp.domain.models.MovieDetails
 import com.ds.movieapp.domain.models.SearchResult
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
+private const val MAX_CAST = 4
 class MoviesRepoImpl @Inject constructor(
     private val client: HttpClient,
     private val storeRepo: StoreRepo,
@@ -75,15 +78,32 @@ class MoviesRepoImpl @Inject constructor(
         val dto = client.get("$baseUrl/movie/$id")
             .body<MovieDetailsDto>()
 
+        val castDto = client.get("$baseUrl/movie/$id/credits")
+            .body<CastDto>()
+
         return flowOf(
             MovieDetails(
                 id = dto.id,
                 title = dto.title,
+                director = castDto.crew.firstOrNull {
+                    it.job == "Director"
+                }?.name,
                 backdropPath = "${storeRepo.getBaseUrl()}w1280/${dto.backdropPath}",
                 tagline = dto.tagline,
                 overview = dto.overview,
                 genres = dto.genres.map { it.name },
-                voteAverage = dto.voteAverage.toFloat()
+                voteAverage = dto.voteAverage.toFloat(),
+                cast = castDto.cast.take(MAX_CAST).map {
+                    CastItem(
+                        castId = it.castId,
+                        character = it.character,
+                        creditId = it.creditId,
+                        id = it.id,
+                        name = it.name,
+                        order = it.order,
+                        profilePath = "${storeRepo.getBaseUrl()}w185/${it.profilePath}"
+                    )
+                }
             )
         ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
             mv.copy(
