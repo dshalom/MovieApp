@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -137,7 +139,8 @@ fun DetailsUi(
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "",
-                            modifier = Modifier.align(Alignment.TopEnd)
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
                                 .rotate(iconRotation)
                         )
                     }
@@ -166,6 +169,46 @@ fun DetailsUi(
                 detailsUiState.movieDetails?.voteAverage.toString().let {
                     Text(
                         text = it,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    detailsUiState.movieDetails?.cast?.forEach {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(it.profilePath)
+                                    .crossfade(true)
+                                    .build(),
+                                placeholder = painterResource(R.drawable.placeholder),
+                                contentDescription = null
+                            )
+
+                            Text(
+                                text = it.name,
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                style = MaterialTheme.typography.titleSmall,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+
+                detailsUiState.movieDetails?.director?.let {
+                    Text(
+                        text = "Director: $it",
                         modifier = Modifier.padding(vertical = 8.dp),
                         style = MaterialTheme.typography.titleSmall,
                         textAlign = TextAlign.Center,
@@ -218,12 +261,14 @@ fun DetailsUiPreview() {
                 movieDetails = MovieDetails(
                     id = "",
                     title = "Badland Hunters",
+                    director = "Steven Spilberg",
                     tagline = "One last hunt to save us all.",
                     voteAverage = 6.5f,
                     overview = "After a deadly earthquake turns Seoul into a lawless badland, a fearless huntsman springs into action to rescue a teenager abducted by a mad doctor.",
                     genres = listOf("Action", "Science Fiction", "Drama"),
                     backdropPath = "https://picsum.photos/300/300",
-                    isFavourite = true
+                    isFavourite = true,
+                    cast = emptyList()
                 ),
                 error = false
             ),
