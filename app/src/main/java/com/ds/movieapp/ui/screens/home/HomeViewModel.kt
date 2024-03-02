@@ -7,7 +7,6 @@ import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,14 +43,20 @@ class HomeViewModel @Inject constructor(
 
             val genres = moviesRepo.getGenres()
             setUiState {
-                copy(
-                    genres = genres.genres,
-                    selectedGenre = genres.genres.first().id
-                )
+                with(genres.genres) {
+                    copy(
+                        genres = this,
+                        selectedGenreId = this.first().id,
+                        selectedGenreName = this.first().name
+                    )
+                }
             }
 
-            moviesRepo.getMoviesByGenre(genres.genres.first().id)
-                .take(MOVIES_TO_SHOW)
+            moviesRepo.getMoviesByGenre(
+                genreId = genres.genres.first().id,
+                count = MOVIES_TO_SHOW,
+                mostPopular = true
+            )
                 .collect {
                     setUiState {
                         copy(movies = it)
@@ -68,12 +73,15 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 setUiState {
-                    copy(selectedGenre = event.genreId)
+                    copy(selectedGenreId = event.genreId, selectedGenreName = event.genreName)
                 }
                 job?.cancel()
                 job = viewModelScope.launch {
-                    moviesRepo.getMoviesByGenre(event.genreId)
-                        .take(MOVIES_TO_SHOW)
+                    moviesRepo.getMoviesByGenre(
+                        genreId = event.genreId,
+                        count = MOVIES_TO_SHOW,
+                        mostPopular = true
+                    )
                         .collect {
                             setUiState {
                                 copy(movies = it)
@@ -97,6 +105,6 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val MOVIES_TO_SHOW = 5
+        private const val MOVIES_TO_SHOW = 10
     }
 }

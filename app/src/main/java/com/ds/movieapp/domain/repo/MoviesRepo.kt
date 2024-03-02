@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface MoviesRepo {
 
     suspend fun getGenres(): Genres
-    suspend fun getMoviesByGenre(genreId: String): Flow<List<Movie>>
+    suspend fun getMoviesByGenre(genreId: String, count: Int, mostPopular: Boolean): Flow<List<Movie>>
     suspend fun searchMovies(query: String): List<SearchResult>
     suspend fun getMovieById(id: String): Flow<MovieDetails>
     suspend fun getConfiguration(): ConfigurationDto

@@ -42,7 +42,11 @@ class GridViewModel @Inject constructor(
                     job?.cancel()
                     genreId = event.genreId
                     job = viewModelScope.launch(exceptionHandler) {
-                        moviesRepo.getMoviesByGenre(event.genreId)
+                        moviesRepo.getMoviesByGenre(
+                            genreId = event.genreId,
+                            count = MOVIES_TO_SHOW,
+                            mostPopular = false
+                        )
                             .collect {
                                 setUiState {
                                     copy(movies = it)
@@ -63,5 +67,9 @@ class GridViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+    companion object {
+        private const val MOVIES_TO_SHOW = 20
     }
 }

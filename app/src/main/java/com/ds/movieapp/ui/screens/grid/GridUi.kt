@@ -26,6 +26,7 @@ import com.ds.movieapp.ui.screens.common.components.MoviesGrid
 @Composable
 fun GridUi(
     genreId: String,
+    genreTitle: String,
     gridUiState: GridUiState,
     navController: NavController,
     event: (GridEvent) -> Unit
@@ -36,7 +37,7 @@ fun GridUi(
     Scaffold(modifier = Modifier.padding(horizontal = 8.dp), topBar = {
         CenterAlignedTopAppBar(title = {
             Text(
-                text = "Details",
+                text = genreTitle,
                 style = MaterialTheme.typography.titleMedium
             )
         }, navigationIcon = {

@@ -15,7 +15,7 @@ sealed class Screen(
     val selectedIcon: ImageVector? = null,
     val unSelectedIcon: ImageVector? = null
 ) {
-    data object TasksScreen : Screen(
+    data object HomeScreen : Screen(
         route = "home",
         title = "Home",
         selectedIcon = Icons.Filled.List,
@@ -48,7 +48,7 @@ sealed class Screen(
 }
 
 val items = listOf(
-    Screen.TasksScreen,
+    Screen.HomeScreen,
     Screen.SearchScreen,
     Screen.ProfileScreen
 )
