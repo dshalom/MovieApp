@@ -8,6 +8,5 @@ data class HomeUiState(
     val genres: List<Genre>,
     var movies: List<Movie>,
     val error: Boolean,
-    var selectedGenreId: String = "",
-    var selectedGenreName: String = ""
+    var selectedGenreId: String = ""
 ) : UiState

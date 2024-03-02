@@ -12,17 +12,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,8 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ds.movieapp.R
@@ -52,121 +45,81 @@ import com.ds.movieapp.ui.theme.MovieAppTheme
 private const val IMAGE_WIDTH = 16f
 private const val IMAGE_HEIGHT = 9f
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsUi(
     movieId: String,
     detailsUiState: DetailsUiState,
-    navController: NavHostController,
     event: (DetailsEvent) -> Unit
 ) {
     LaunchedEffect(Unit) {
         event(DetailsEvent.OnLoad(movieId))
     }
 
-    Scaffold(modifier = Modifier.padding(horizontal = 8.dp), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = "Details",
-                style = MaterialTheme.typography.titleMedium
+    ElevatedCard(
+        shape = RectangleShape,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(detailsUiState.movieDetails?.backdropPath)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.placeholder),
+                contentDescription = null,
+                modifier = Modifier
+                    .aspectRatio(IMAGE_WIDTH / IMAGE_HEIGHT)
             )
-        }, navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+
+            val storesList: String? = ""
+
+            storesList?.takeIf { it.isNotEmpty() }?.apply {
+                // Provides you list if not empty
+            }
+
+            var isExpanded by remember {
+                mutableStateOf(false)
+            }
+            val transition = updateTransition(targetState = isExpanded, label = "expanded")
+            val iconRotation by transition.animateFloat(label = "iconRotation") { isExpanded ->
+                if (isExpanded) 180f else 0f
+            }
+
+            detailsUiState.movieDetails?.title?.takeIf { it.isNotEmpty() }?.let {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            isExpanded = !isExpanded
+                        }
+                ) {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Localized description"
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .rotate(iconRotation)
                     )
                 }
-            })
-    }) { paddingValues ->
-        ElevatedCard(
-            shape = RectangleShape,
-            modifier = Modifier.padding(paddingValues),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(detailsUiState.movieDetails?.backdropPath)
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(R.drawable.placeholder),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(IMAGE_WIDTH / IMAGE_HEIGHT)
-                )
-
-                val storesList: String? = ""
-
-                storesList?.takeIf { it.isNotEmpty() }?.apply {
-                    // Provides you list if not empty
-                }
-
-                var isExpanded by remember {
-                    mutableStateOf(false)
-                }
-                val transition = updateTransition(targetState = isExpanded, label = "expanded")
-                val iconRotation by transition.animateFloat(label = "iconRotation") { isExpanded ->
-                    if (isExpanded) 180f else 0f
-                }
-
-                detailsUiState.movieDetails?.title?.takeIf { it.isNotEmpty() }?.let {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                isExpanded = !isExpanded
-                            }
-                    ) {
-                        Text(
-                            text = it,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(vertical = 8.dp),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "",
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .rotate(iconRotation)
-                        )
-                    }
-                    detailsUiState.movieDetails.tagline.takeIf { it.isNotEmpty() }?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            style = MaterialTheme.typography.titleSmall,
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
-                    detailsUiState.movieDetails.overview.let {
-                        AnimatedVisibility(visible = isExpanded) {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.titleSmall,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-
-                detailsUiState.movieDetails?.voteAverage.toString().let {
+                detailsUiState.movieDetails.tagline.takeIf { it.isNotEmpty() }?.let {
                     Text(
                         text = it,
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -177,72 +130,93 @@ fun DetailsUi(
                     )
                 }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    detailsUiState.movieDetails?.cast?.forEach {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(it.profilePath)
-                                    .crossfade(true)
-                                    .build(),
-                                placeholder = painterResource(R.drawable.placeholder),
-                                contentDescription = null
-                            )
-
-                            Text(
-                                text = it.name,
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                style = MaterialTheme.typography.titleSmall,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                detailsUiState.movieDetails.overview.let {
+                    AnimatedVisibility(visible = isExpanded) {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleSmall,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
+            }
 
-                detailsUiState.movieDetails?.director?.let {
-                    Text(
-                        text = "Director: $it",
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        style = MaterialTheme.typography.titleSmall,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                GenreChips(
+            detailsUiState.movieDetails?.voteAverage.toString().let {
+                Text(
+                    text = it,
                     modifier = Modifier.padding(vertical = 8.dp),
-                    titles = detailsUiState.movieDetails?.genres ?: emptyList()
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+            }
 
-                Button(
-                    onClick = {
-                        event(
-                            DetailsEvent.OnFavouriteClicked(
-                                movieId,
-                                !(detailsUiState.movieDetails?.isFavourite ?: false)
-                            )
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                detailsUiState.movieDetails?.cast?.forEach {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(it.profilePath)
+                                .crossfade(true)
+                                .build(),
+                            placeholder = painterResource(R.drawable.placeholder),
+                            contentDescription = null
                         )
-                    },
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        text = if (detailsUiState.movieDetails?.isFavourite == true) {
-                            "Remove favourite"
-                        } else {
-                            "Add to favourites"
-                        },
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
-                    )
+
+                        Text(
+                            text = it.name,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
+            }
+
+            detailsUiState.movieDetails?.director?.let {
+                Text(
+                    text = "Director: $it",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            GenreChips(
+                modifier = Modifier.padding(vertical = 8.dp),
+                titles = detailsUiState.movieDetails?.genres ?: emptyList()
+            )
+
+            Button(
+                onClick = {
+                    event(
+                        DetailsEvent.OnFavouriteClicked(
+                            movieId,
+                            !(detailsUiState.movieDetails?.isFavourite ?: false)
+                        )
+                    )
+                },
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    text = if (detailsUiState.movieDetails?.isFavourite == true) {
+                        "Remove favourite"
+                    } else {
+                        "Add to favourites"
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
@@ -271,8 +245,7 @@ fun DetailsUiPreview() {
                     cast = emptyList()
                 ),
                 error = false
-            ),
-            rememberNavController()
+            )
         ) {
         }
     }

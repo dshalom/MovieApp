@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,68 +29,54 @@ fun HomeUi(
     navController: NavHostController,
     event: (HomeEvent) -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        topBar = {
-            CenterAlignedTopAppBar(title = {
-                Text(
-                    text = "Movies",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            })
-        }
-    ) { paddingValues ->
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxHeight()
-        ) {
-            item {
-                GenreChips(
-                    modifier = Modifier.height(50.dp),
-                    titles = homeUiState.genres,
-                    selectedId = homeUiState.selectedGenreId
-                ) { id, name ->
-                    event(HomeEvent.OnGenreClicked(id, name))
-                }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxHeight()
+    ) {
+        item {
+            GenreChips(
+                modifier = Modifier.height(50.dp),
+                titles = homeUiState.genres,
+                selectedId = homeUiState.selectedGenreId
+            ) { id ->
+                event(HomeEvent.OnGenreClicked(id))
             }
-            item {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+        }
+        item {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Popular",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Button(
+                    onClick = {
+                        navController.navigate("${Screen.GridScreen.route}/${homeUiState.selectedGenreId}")
+                    },
+                    shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
-                        text = "Popular",
-                        style = MaterialTheme.typography.titleLarge
+                        text = "See all",
+                        style = MaterialTheme.typography.titleMedium
                     )
-                    Button(
-                        onClick = {
-                            navController.navigate("${Screen.GridScreen.route}/${homeUiState.selectedGenreId}/${homeUiState.selectedGenreName}")
-                        },
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Text(
-                            text = "See all",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
                 }
             }
-            item {
-                MoviesUi(
-                    movies = homeUiState.movies,
-                    onMovieClicked = { id ->
-                        navController.navigate("${Screen.DetailsScreen.route}/$id")
-                    },
-                    onFavouriteClicked = { id, isFavourite ->
-                        event(HomeEvent.OnFavouriteClicked(id, isFavourite))
-                    }
-                )
-            }
+        }
+        item {
+            MoviesUi(
+                movies = homeUiState.movies,
+                onMovieClicked = { id ->
+                    navController.navigate("${Screen.DetailsScreen.route}/$id")
+                },
+                onFavouriteClicked = { id, isFavourite ->
+                    event(HomeEvent.OnFavouriteClicked(id, isFavourite))
+                }
+            )
         }
     }
 }
@@ -102,7 +86,7 @@ fun GenreChips(
     titles: List<Genre>,
     selectedId: String,
     modifier: Modifier = Modifier,
-    onGenreClicked: (String, String) -> Unit
+    onGenreClicked: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -112,7 +96,7 @@ fun GenreChips(
     ) {
         titles.forEach { genre ->
             GenreChip(genre.name, genre.id == selectedId) {
-                onGenreClicked(genre.id, genre.name)
+                onGenreClicked(genre.id)
             }
         }
     }
