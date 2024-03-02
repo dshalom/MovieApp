@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 private const val MAX_CAST = 4
+
 class MoviesRepoImpl @Inject constructor(
     private val client: HttpClient,
     private val storeRepo: StoreRepo,
@@ -32,10 +33,21 @@ class MoviesRepoImpl @Inject constructor(
             .body<Genres>()
     }
 
-    override suspend fun getMoviesByGenre(genreId: String): Flow<List<Movie>> {
+    override suspend fun getMoviesByGenre(
+        genreId: String,
+        count: Int,
+        mostPopular: Boolean
+    ): Flow<List<Movie>> {
+        val queryString = when (mostPopular) {
+            true -> "$baseUrl/discover/movie?with_genres=$genreId&sort_by=vote_count.desc"
+            false -> "$baseUrl/discover/movie?with_genres=$genreId"
+        }
         return flowOf(
-            client.get("$baseUrl/discover/movie?with_genres=$genreId")
-                .body<MoviesDto>().results.map {
+
+            client.get(queryString)
+                .body<MoviesDto>().results
+                .take(count)
+                .map {
                     Movie(
                         adult = it.adult,
                         backdropPath = it.backdropPath ?: "",

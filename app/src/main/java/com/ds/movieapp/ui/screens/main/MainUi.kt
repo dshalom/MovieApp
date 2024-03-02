@@ -49,10 +49,10 @@ fun MainUi(
 
         NavHost(
             navController,
-            startDestination = Screen.TasksScreen.route,
+            startDestination = Screen.HomeScreen.route,
             Modifier.padding(paddingValues)
         ) {
-            composable(Screen.TasksScreen.route) {
+            composable(Screen.HomeScreen.route) {
                 val homeUiState = homeViewModel.uiState.rememberCollectWithLifecycle()
                 HomeUi(
                     homeUiState = homeUiState.value,
@@ -68,14 +68,16 @@ fun MainUi(
                 )
             }
             composable(
-                "${Screen.GridScreen.route}/{genreId}",
+                "${Screen.GridScreen.route}/{genreId}/{genreName}",
                 arguments = listOf(
-                    navArgument("genreId") { type = NavType.StringType }
+                    navArgument("genreId") { type = NavType.StringType },
+                    navArgument("genreName") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
                 val gridUiState = gridViewModel.uiState.rememberCollectWithLifecycle()
                 GridUi(
                     backStackEntry.arguments?.getString("genreId") ?: "",
+                    backStackEntry.arguments?.getString("genreName") ?: "",
                     gridUiState.value,
                     navController,
                     event = gridViewModel::handleEvent
