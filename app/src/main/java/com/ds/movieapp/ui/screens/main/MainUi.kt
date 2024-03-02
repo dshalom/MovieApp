@@ -1,10 +1,12 @@
 package com.ds.movieapp.ui.screens.main
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,15 +15,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -36,6 +37,8 @@ import com.ds.movieapp.ui.screens.Screen
 import com.ds.movieapp.ui.screens.common.viewmodel.rememberCollectWithLifecycle
 import com.ds.movieapp.ui.screens.details.DetailsUi
 import com.ds.movieapp.ui.screens.details.DetailsViewModel
+import com.ds.movieapp.ui.screens.favourites.FavouritesUi
+import com.ds.movieapp.ui.screens.favourites.FavouritesViewModel
 import com.ds.movieapp.ui.screens.grid.GridUi
 import com.ds.movieapp.ui.screens.grid.GridViewModel
 import com.ds.movieapp.ui.screens.home.HomeUi
@@ -49,6 +52,7 @@ import com.ds.movieapp.ui.screens.search.SearchUi
 fun MainUi(
     homeViewModel: HomeViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
+    favouritesViewModel: FavouritesViewModel = hiltViewModel(),
     gridViewModel: GridViewModel = hiltViewModel(),
     detailsViewModel: DetailsViewModel = hiltViewModel()
 ) {
@@ -86,6 +90,13 @@ fun MainUi(
                     event = profileViewModel::handleEvent
                 )
             }
+            composable(Screen.FavouritesScreen.route) {
+                val favouritesUiState = favouritesViewModel.uiState.rememberCollectWithLifecycle()
+                FavouritesUi(
+                    favouritesUiState = favouritesUiState.value,
+                    event = favouritesViewModel::handleEvent
+                )
+            }
             composable(
                 "${Screen.GridScreen.route}/{genreId}",
                 arguments = listOf(
@@ -121,29 +132,20 @@ fun MainUi(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesTopBar(currentRoute: String, navController: NavHostController) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Movie Mania",
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Icon(
-                    modifier = Modifier
-                        .padding(end = 8.dp),
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "profile picture"
-                )
-            }
+            Text(
+                "Movie Mania",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
         },
 
         navigationIcon = {
-            if (currentRoute.startsWith(Screen.DetailsScreen.route) || currentRoute.startsWith(
-                    Screen.GridScreen.route
-                )
+            if (currentRoute.startsWith(Screen.DetailsScreen.route) ||
+                currentRoute.startsWith(Screen.GridScreen.route) ||
+                currentRoute.startsWith(Screen.ProfileScreen.route)
             ) {
                 IconButton({ navController.popBackStack() }) {
                     Icon(
@@ -152,6 +154,17 @@ fun MoviesTopBar(currentRoute: String, navController: NavHostController) {
                     )
                 }
             }
+        },
+        actions = {
+            Icon(
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .clickable {
+                        navController.navigate(Screen.ProfileScreen.route)
+                    },
+                imageVector = Icons.Filled.AccountCircle,
+                contentDescription = "profile picture"
+            )
         }
     )
 }

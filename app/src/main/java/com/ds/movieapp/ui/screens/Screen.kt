@@ -1,9 +1,11 @@
 package com.ds.movieapp.ui.screens
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
@@ -45,10 +47,17 @@ sealed class Screen(
         selectedIcon = Icons.Filled.Person,
         unSelectedIcon = Icons.Outlined.Person
     )
+
+    data object FavouritesScreen : Screen(
+        route = "favourites",
+        title = "Favourites",
+        selectedIcon = Icons.Filled.Favorite,
+        unSelectedIcon = Icons.Outlined.Favorite
+    )
 }
 
 val items = listOf(
     Screen.HomeScreen,
     Screen.SearchScreen,
-    Screen.ProfileScreen
+    Screen.FavouritesScreen
 )
