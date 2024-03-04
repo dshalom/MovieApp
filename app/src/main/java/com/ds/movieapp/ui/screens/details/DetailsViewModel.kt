@@ -5,7 +5,6 @@ import com.ds.movieapp.domain.repo.MoviesRepo
 import com.ds.movieapp.ui.screens.common.viewmodel.UdfViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,7 +32,7 @@ class DetailsViewModel @Inject constructor(
         when (event) {
             is DetailsEvent.OnLoad -> {
                 viewModelScope.launch(exceptionHandler) {
-                    moviesRepo.getMovieById(event.movieId)
+                    moviesRepo.getMovieDetailsById(event.movieId)
                         .collect {
                             setUiState {
                                 copy(movieDetails = it)

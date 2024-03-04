@@ -11,8 +11,9 @@ interface MoviesRepo {
 
     suspend fun getGenres(): Genres
     suspend fun getMoviesByGenre(genreId: String, count: Int, mostPopular: Boolean): Flow<List<Movie>>
+    suspend fun getFavoriteMovies(): Flow<List<MovieDetails>>
     suspend fun searchMovies(query: String): List<SearchResult>
-    suspend fun getMovieById(id: String): Flow<MovieDetails>
+    suspend fun getMovieDetailsById(id: String): Flow<MovieDetails>
     suspend fun getConfiguration(): ConfigurationDto
     fun addToFavorites(movieId: String)
     fun removeFromFavorites(movieId: String)
