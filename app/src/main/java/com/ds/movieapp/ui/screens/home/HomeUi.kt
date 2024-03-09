@@ -27,7 +27,8 @@ import com.ds.movieapp.ui.screens.Screen
 fun HomeUi(
     homeUiState: HomeUiState,
     navController: NavHostController,
-    event: (HomeEvent) -> Unit
+    event: (HomeEvent) -> Unit,
+    error: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -78,6 +79,9 @@ fun HomeUi(
                 }
             )
         }
+    }
+    if (homeUiState.error) {
+        error("Error")
     }
 }
 

@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun FavouritesUi(
     favouritesUiState: FavouritesUiState,
-    event: (FavouritesEvent) -> Unit
+    event: (FavouritesEvent) -> Unit,
+    error: (String) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -21,5 +22,8 @@ fun FavouritesUi(
             text = "Favourites",
             style = MaterialTheme.typography.headlineLarge
         )
+    }
+    if (favouritesUiState.error) {
+        error("Error")
     }
 }

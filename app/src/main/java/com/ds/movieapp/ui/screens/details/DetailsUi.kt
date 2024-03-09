@@ -49,7 +49,8 @@ private const val IMAGE_HEIGHT = 9f
 fun DetailsUi(
     movieId: String,
     detailsUiState: DetailsUiState,
-    event: (DetailsEvent) -> Unit
+    event: (DetailsEvent) -> Unit,
+    error: (String) -> Unit
 ) {
     LaunchedEffect(Unit) {
         event(DetailsEvent.OnLoad(movieId))
@@ -220,6 +221,9 @@ fun DetailsUi(
             }
         }
     }
+    if (detailsUiState.error) {
+        error("Error")
+    }
 }
 
 @Preview(
@@ -245,7 +249,8 @@ fun DetailsUiPreview() {
                     cast = emptyList()
                 ),
                 error = false
-            )
+            ),
+            event = {}
         ) {
         }
     }

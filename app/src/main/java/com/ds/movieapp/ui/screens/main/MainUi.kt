@@ -14,12 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +50,7 @@ import com.ds.movieapp.ui.screens.items
 import com.ds.movieapp.ui.screens.profile.ProfileUi
 import com.ds.movieapp.ui.screens.profile.ProfileViewModel
 import com.ds.movieapp.ui.screens.search.SearchUi
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainUi(
@@ -63,10 +67,15 @@ fun MainUi(
             currentBackStackEntry?.destination?.route ?: Screen.HomeScreen.route
         }
     }
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = { MoviesTopBar(currentRoute, navController) },
-        bottomBar = { MoviesNavigationBar(navController) }
+        bottomBar = { MoviesNavigationBar(navController) },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        }
 
     ) { paddingValues ->
 
@@ -81,21 +90,33 @@ fun MainUi(
                     homeUiState = homeUiState.value,
                     navController,
                     event = homeViewModel::handleEvent
-                )
+                ) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
             }
             composable(Screen.ProfileScreen.route) {
                 val profileUiState = profileViewModel.uiState.rememberCollectWithLifecycle()
                 ProfileUi(
                     profileUiState = profileUiState.value,
                     event = profileViewModel::handleEvent
-                )
+                ) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
             }
             composable(Screen.FavouritesScreen.route) {
                 val favouritesUiState = favouritesViewModel.uiState.rememberCollectWithLifecycle()
                 FavouritesUi(
                     favouritesUiState = favouritesUiState.value,
                     event = favouritesViewModel::handleEvent
-                )
+                ) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
             }
             composable(
                 "${Screen.GridScreen.route}/{genreId}",
@@ -109,7 +130,11 @@ fun MainUi(
                     gridUiState.value,
                     navController,
                     event = gridViewModel::handleEvent
-                )
+                ) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
             }
             composable(
                 "${Screen.DetailsScreen.route}/{movieId}",
@@ -122,9 +147,19 @@ fun MainUi(
                     backStackEntry.arguments?.getString("movieId") ?: "",
                     detailsUiState.value,
                     event = detailsViewModel::handleEvent
-                )
+                ) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
             }
-            composable(Screen.SearchScreen.route) { SearchUi(navController) }
+            composable(Screen.SearchScreen.route) {
+                SearchUi(navController) { message ->
+                    scope.launch {
+                        snackBarHostState.showSnackbar(message = message)
+                    }
+                }
+            }
         }
     }
 }

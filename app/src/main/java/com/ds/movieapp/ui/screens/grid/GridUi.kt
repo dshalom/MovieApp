@@ -18,7 +18,8 @@ fun GridUi(
     genreId: String,
     gridUiState: GridUiState,
     navController: NavController,
-    event: (GridEvent) -> Unit
+    event: (GridEvent) -> Unit,
+    error: (String) -> Unit
 ) {
     LaunchedEffect(Unit) {
         event(GridEvent.OnLoad(genreId))
@@ -40,5 +41,8 @@ fun GridUi(
                 }
             )
         }
+    }
+    if (gridUiState.error) {
+        error("Error")
     }
 }

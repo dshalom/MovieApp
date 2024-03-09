@@ -46,10 +46,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             when (event) {
                 ProfileEvent.OnLoginClick -> {
-                    val res = authenticationRepo.login("abc@gmail.com", "123!@edeK")
-                    setUiState {
-                        copy(error = !res)
-                    }
+                    authenticationRepo.createUser("abc@gmail.com", "123!@edeK")
                 }
 
                 ProfileEvent.OnLogOutClick -> {
