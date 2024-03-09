@@ -2,9 +2,9 @@ package com.ds.movieapp.ui.screens.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +16,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,19 +44,13 @@ private const val IMAGE_HEIGHT = 9f
 @Composable
 fun SearchUi(
     navController: NavController,
-    searchViewModel: SearchViewModel = hiltViewModel()
+    searchViewModel: SearchViewModel = hiltViewModel(),
+    error: (String) -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        topBar = {
-            DoingSearch(searchViewModel) {
-                navController.navigate("${Screen.DetailsScreen.route}/$it")
-            }
+    Column(Modifier.fillMaxSize()) {
+        DoingSearch(searchViewModel) {
+            navController.navigate("${Screen.DetailsScreen.route}/$it")
         }
-
-    ) { paddingValues ->
-
-        Box(modifier = Modifier.padding(paddingValues))
     }
 }
 

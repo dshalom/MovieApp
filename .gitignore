@@ -90,3 +90,5 @@ local.properties
 /buildSrc/build/kotlin/compileKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i
 /buildSrc/build/kotlin/compileKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len
 /buildSrc/build/classes/kotlin/main/Versions.class
+/buildSrc/build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len
+/buildSrc/build/kotlin/compileKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin

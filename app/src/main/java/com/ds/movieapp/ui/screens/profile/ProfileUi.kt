@@ -15,7 +15,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun ProfileUi(
     profileUiState: ProfileUiState,
-    event: (ProfileEvent) -> Unit
+    event: (ProfileEvent) -> Unit,
+    error: (String) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -55,5 +56,8 @@ fun ProfileUi(
                 )
             }
         }
+    }
+    if (profileUiState.error) {
+        error("Error")
     }
 }

@@ -18,6 +18,7 @@ import io.ktor.client.request.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private const val MAX_CAST = 4
@@ -62,16 +63,24 @@ class MoviesRepoImpl @Inject constructor(
                         isFavourite = false
                     )
                 }
-        ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
-            mv.map { m ->
-                m.copy(
+        ).combine(watchListFavoritesRepo.observeFavorites()) { movie, favourite ->
+            movie.map { mv ->
+                mv.copy(
                     isFavourite = (
-                        fv?.count { f ->
-                            f.movieId == m.id
+                        favourite?.count { fv ->
+                            fv.movieId == mv.id
                         } ?: 0
                         ) > 0
                 )
             }
+        }
+    }
+
+    override suspend fun getFavoriteMovies(): Flow<List<MovieDetails>> {
+        return watchListFavoritesRepo.observeFavorites().map {
+            it?.map { favouriteId ->
+                getMovieDetails(favouriteId.movieId)
+            } ?: emptyList()
         }
     }
 
@@ -86,42 +95,14 @@ class MoviesRepoImpl @Inject constructor(
             }
     }
 
-    override suspend fun getMovieById(id: String): Flow<MovieDetails> {
-        val dto = client.get("$baseUrl/movie/$id")
-            .body<MovieDetailsDto>()
-
-        val castDto = client.get("$baseUrl/movie/$id/credits")
-            .body<CastDto>()
-
+    override suspend fun getMovieDetailsById(id: String): Flow<MovieDetails> {
         return flowOf(
-            MovieDetails(
-                id = dto.id,
-                title = dto.title,
-                director = castDto.crew.firstOrNull {
-                    it.job == "Director"
-                }?.name,
-                backdropPath = "${storeRepo.getBaseUrl()}w1280/${dto.backdropPath}",
-                tagline = dto.tagline,
-                overview = dto.overview,
-                genres = dto.genres.map { it.name },
-                voteAverage = dto.voteAverage.toFloat(),
-                cast = castDto.cast.take(MAX_CAST).map {
-                    CastItem(
-                        castId = it.castId,
-                        character = it.character,
-                        creditId = it.creditId,
-                        id = it.id,
-                        name = it.name,
-                        order = it.order,
-                        profilePath = "${storeRepo.getBaseUrl()}w185/${it.profilePath}"
-                    )
-                }
-            )
-        ).combine(watchListFavoritesRepo.observeFavorites()) { mv, fv ->
-            mv.copy(
+            getMovieDetails(id)
+        ).combine(watchListFavoritesRepo.observeFavorites()) { movie, favourite ->
+            movie.copy(
                 isFavourite = (
-                    fv?.count { f ->
-                        f.movieId == mv.id
+                    favourite?.count { fav ->
+                        fav.movieId == movie.id
                     } ?: 0
                     ) > 0
             )
@@ -143,5 +124,37 @@ class MoviesRepoImpl @Inject constructor(
 
     override fun onCleared() {
         client.close()
+    }
+
+    private suspend fun getMovieDetails(id: String): MovieDetails {
+        val dto = client.get("$baseUrl/movie/$id")
+            .body<MovieDetailsDto>()
+
+        val castDto = client.get("$baseUrl/movie/$id/credits")
+            .body<CastDto>()
+
+        return MovieDetails(
+            id = dto.id,
+            title = dto.title,
+            director = castDto.crew.firstOrNull {
+                it.job == "Director"
+            }?.name,
+            backdropPath = "${storeRepo.getBaseUrl()}w1280/${dto.backdropPath}",
+            tagline = dto.tagline,
+            overview = dto.overview,
+            genres = dto.genres.map { it.name },
+            voteAverage = dto.voteAverage.toFloat(),
+            cast = castDto.cast.take(MAX_CAST).map {
+                CastItem(
+                    castId = it.castId,
+                    character = it.character,
+                    creditId = it.creditId,
+                    id = it.id,
+                    name = it.name,
+                    order = it.order,
+                    profilePath = "${storeRepo.getBaseUrl()}w185/${it.profilePath}"
+                )
+            }
+        )
     }
 }

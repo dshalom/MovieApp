@@ -46,8 +46,7 @@ class HomeViewModel @Inject constructor(
                 with(genres.genres) {
                     copy(
                         genres = this,
-                        selectedGenreId = this.first().id,
-                        selectedGenreName = this.first().name
+                        selectedGenreId = this.first().id
                     )
                 }
             }
@@ -73,7 +72,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnGenreClicked -> {
                 setUiState {
-                    copy(selectedGenreId = event.genreId, selectedGenreName = event.genreName)
+                    copy(selectedGenreId = event.genreId)
                 }
                 job?.cancel()
                 job = viewModelScope.launch {
