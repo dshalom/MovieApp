@@ -44,8 +44,7 @@ private const val IMAGE_HEIGHT = 9f
 @Composable
 fun SearchUi(
     navController: NavController,
-    searchViewModel: SearchViewModel = hiltViewModel(),
-    error: (String) -> Unit
+    searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     Column(Modifier.fillMaxSize()) {
         DoingSearch(searchViewModel) {

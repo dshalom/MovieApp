@@ -154,11 +154,7 @@ fun MainUi(
                 }
             }
             composable(Screen.SearchScreen.route) {
-                SearchUi(navController) { message ->
-                    scope.launch {
-                        snackBarHostState.showSnackbar(message = message)
-                    }
-                }
+                SearchUi(navController)
             }
         }
     }
